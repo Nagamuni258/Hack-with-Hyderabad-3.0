@@ -1,449 +1,651 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deal Intelligence Agent — Persistent Sales Memory</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Deal Intelligence — AI Sales Ops Workstation</title>
+  
+  <!-- Material Symbols & Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  
   <style>
-    :root {
-      --bg: #0b0f19;
-      --card-bg: #111827;
-      --card-border: #1f2937;
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --accent: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --code-bg: #1e293b;
+    @layer base {
+      html, body { margin:0; padding:0; }
+      body { overscroll-behavior:none; }
+      main>:first-child { margin-top:0!important; }
+      main>:last-child { margin-bottom:0!important; }
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #c4c5d5; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #747685; }
+    
+    .spinner {
+      animation: spin 1s linear infinite;
     }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      padding: 24px 32px;
-      font-size: 16px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    /* Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--card-border);
-      margin-bottom: 24px;
-    }
-
-    .title-group h1 {
-      font-size: 28px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #a5b4fc, #6366f1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .title-group p {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-top: 4px;
-    }
-
-    .badges {
-      display: flex;
-      gap: 10px;
-    }
-
-    .badge {
-      font-size: 12px;
-      padding: 6px 12px;
-      border-radius: 9999px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .badge-memory {
-      background: rgba(99, 102, 241, 0.15);
-      color: #818cf8;
-      border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-
-    .badge-llm {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    /* Layout Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 24px;
-    }
-
-    /* Left Sidebar: Deal Controls & Logging */
-    .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-      margin-bottom: 20px;
-    }
-
-    .card h2 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    select, textarea, input {
-      width: 100%;
-      background: #0d131f;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      color: var(--text);
-      padding: 10px 14px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    select:focus, textarea:focus, input:focus {
-      border-color: var(--primary);
-    }
-
-    .deal-info-box {
-      background: #0d131f;
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin-top: 14px;
-      border: 1px dashed var(--card-border);
-      font-size: 14px;
-    }
-
-    .deal-info-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-
-    .deal-info-row:last-child {
-      margin-bottom: 0;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 11px 18px;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-      width: 100%;
-    }
-
-    .btn-primary {
-      background-color: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background-color: var(--primary-hover);
-    }
-
-    .btn-secondary {
-      background-color: #1f2937;
-      color: #d1d5db;
-      border: 1px solid #374151;
-    }
-
-    .btn-secondary:hover {
-      background-color: #374151;
-      color: white;
-    }
-
-    .btn-accent {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-    }
-
-    .btn-accent:hover {
-      background: linear-gradient(135deg, #059669, #047857);
-    }
-
-    /* Main Display Area */
-    .action-bar {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .output-card {
-      min-height: 480px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .output-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    .output-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: #f3f4f6;
-    }
-
-    .output-body {
-      flex: 1;
-      overflow-y: auto;
-      background: #0d131f;
-      border-radius: 8px;
-      padding: 20px 24px;
-      border: 1px solid var(--card-border);
-      font-size: 15px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    /* Markdown Styling Inside Output */
-    .output-body h3 {
-      font-size: 18px;
-      margin: 14px 0 8px 0;
-      color: #93c5fd;
-    }
-
-    .output-body strong {
-      color: #f9fafb;
-    }
-
-    .output-body ul {
-      margin-left: 20px;
-      margin-bottom: 12px;
-    }
-
-    .output-body li {
-      margin-bottom: 6px;
-    }
-
-    /* Loading Spinner */
-    .loader {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-
     @keyframes spin {
+      from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #1f2937;
-      border: 1px solid #374151;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-      display: none;
-      z-index: 1000;
-    }
   </style>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-high": "#e2e7ff",
+            "primary": "#1c42b3",
+            "outline-variant": "#c4c5d5",
+            "error-container": "#ffdad6",
+            "outline": "#747685",
+            "on-secondary-container": "#663500",
+            "primary-fixed": "#dce1ff",
+            "on-primary-fixed": "#001551",
+            "secondary-container": "#fe932c",
+            "surface-container-low": "#f2f3ff",
+            "surface-variant": "#dae2fd",
+            "primary-container": "#3b5ccc",
+            "on-primary-container": "#dde1ff",
+            "tertiary-container": "#a44b00",
+            "secondary-fixed": "#ffdcc3",
+            "surface-container-highest": "#dae2fd",
+            "on-tertiary": "#ffffff",
+            "on-error-container": "#93000a",
+            "surface-bright": "#faf8ff",
+            "surface-dim": "#d2d9f4",
+            "background": "#faf8ff",
+            "on-tertiary-container": "#ffdcc9",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed-variant": "#753400",
+            "on-secondary": "#ffffff",
+            "surface-container": "#eaedff",
+            "inverse-surface": "#283044",
+            "on-secondary-fixed-variant": "#6e3900",
+            "secondary-fixed-dim": "#ffb77d",
+            "error": "#ba1a1a",
+            "on-surface": "#131b2e",
+            "on-surface-variant": "#444653",
+            "surface-tint": "#3355c5",
+            "surface": "#faf8ff",
+            "on-tertiary-fixed": "#321200",
+            "inverse-primary": "#b7c4ff",
+            "surface-container-lowest": "#ffffff",
+            "tertiary": "#7f3800",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#ffdbc9",
+            "on-primary-fixed-variant": "#103bac",
+            "tertiary-fixed-dim": "#ffb68c",
+            "inverse-on-surface": "#eef0ff",
+            "secondary": "#904d00",
+            "on-secondary-fixed": "#2f1500",
+            "on-background": "#131b2e",
+            "primary-fixed-dim": "#b7c4ff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          spacing: {
+            "space-2xl": "1.5rem",
+            "space-lg": "0.75rem",
+            "space-xl": "1rem",
+            "space-md": "0.5rem",
+            "gutter": "0.75rem",
+            "space-xs": "0.125rem",
+            "space-sm": "0.25rem",
+            "margin": "1rem"
+          },
+          fontFamily: {
+            "data-metric": ["JetBrains Mono"],
+            "data-metric-lg": ["JetBrains Mono"],
+            "body-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "headline-md": ["Inter"],
+            "label-sm": ["JetBrains Mono"],
+            "body-sm": ["Inter"],
+            "headline-sm": ["Inter"],
+            "label-md": ["JetBrains Mono"]
+          },
+          fontSize: {
+            "data-metric": ["0.875rem", { lineHeight: "1rem", letterSpacing: "-0.02em", fontWeight: "600" }],
+            "data-metric-lg": ["1.25rem", { lineHeight: "1.375rem", letterSpacing: "-0.03em", fontWeight: "600" }],
+            "body-lg": ["0.875rem", { lineHeight: "1.25rem", letterSpacing: "-0.005em", fontWeight: "400" }],
+            "body-md": ["0.8125rem", { lineHeight: "1.125rem", letterSpacing: "0em", fontWeight: "400" }],
+            "headline-lg": ["1.25rem", { lineHeight: "1.5rem", letterSpacing: "-0.015em", fontWeight: "600" }],
+            "headline-md": ["1.125rem", { lineHeight: "1.375rem", letterSpacing: "-0.0125em", fontWeight: "600" }],
+            "label-sm": ["0.6875rem", { lineHeight: "0.875rem", letterSpacing: "0em", fontWeight: "500" }],
+            "body-sm": ["0.75rem", { lineHeight: "1rem", letterSpacing: "0.005em", fontWeight: "400" }],
+            "headline-sm": ["0.9375rem", { lineHeight: "1.25rem", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "label-md": ["0.75rem", { lineHeight: "1rem", letterSpacing: "-0.01em", fontWeight: "500" }]
+          }
+        }
+      }
+    };
+  </script>
 </head>
-<body>
+<body class="bg-surface text-on-surface font-body-md text-body-md antialiased select-none">
 
-<div class="container">
-  <header>
-    <div class="title-group">
-      <h1>💼 Deal Intelligence Agent</h1>
-      <p>Autonomous sales memory & cross-deal pattern intelligence for closing faster</p>
+<!-- TOP APP HEADER -->
+<header class="fixed top-0 left-0 right-0 h-10 bg-surface-container-lowest border-b border-outline-variant z-50 flex items-center justify-between px-space-xl">
+  <div class="flex items-center gap-space-lg">
+    <div class="flex items-center gap-space-sm cursor-pointer hover:bg-surface-container-low px-space-sm py-space-xs rounded transition-colors">
+      <span class="material-symbols-outlined text-[16px] text-primary">pie_chart</span>
+      <span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-semibold">Deal Intelligence</span>
+      <span class="text-outline font-label-sm text-label-sm">/</span>
+      <span class="font-body-md text-body-md text-on-surface-variant font-medium">Sales Ops · Workstation</span>
     </div>
-    <div class="badges">
-      <span class="badge badge-memory">🧠 Hindsight Cloud Memory</span>
-      <span class="badge badge-llm">⚡ Groq openai/gpt-oss-120b</span>
+    <div class="h-4 w-[1px] bg-outline-variant"></div>
+    <div class="flex items-center gap-space-md bg-surface-container-low border border-outline-variant rounded px-space-md py-space-xs">
+      <span class="material-symbols-outlined text-[14px] text-outline">search</span>
+      <input id="quick-filter-top" oninput="onFilterChange(this.value)" class="bg-transparent border-none outline-none text-outline font-body-sm text-body-sm w-32 placeholder:text-outline" placeholder="Quick find..."/>
+      <kbd class="bg-surface-container-lowest border border-outline-variant font-label-sm text-label-sm text-on-surface-variant px-space-xs rounded leading-none py-0.5">⌘K</kbd>
     </div>
-  </header>
-
-  <div class="grid">
-    <!-- Left Column: Controls -->
-    <div>
-      <!-- Deal Selector -->
-      <div class="card">
-        <h2>1. Active Opportunity</h2>
-        <label for="deal-select">Select Deal</label>
-        <select id="deal-select" onchange="onDealChange()">
-          <option value="" disabled selected>Loading deals...</option>
-        </select>
-
-        <div id="deal-info" class="deal-info-box" style="display: none;">
-          <div class="deal-info-row">
-            <span style="color: var(--text-muted);">Company:</span>
-            <strong id="info-company">-</strong>
-          </div>
-          <div class="deal-info-row">
-            <span style="color: var(--text-muted);">Deal Value:</span>
-            <strong id="info-value" style="color: #34d399;">-</strong>
-          </div>
-          <div class="deal-info-row">
-            <span style="color: var(--text-muted);">Account Rep:</span>
-            <span id="info-rep">-</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Log New Interaction -->
-      <div class="card">
-        <h2>2. Log Interaction</h2>
-        <label for="log-text">Call / Email / Meeting Note</label>
-        <textarea id="log-text" rows="4" placeholder="e.g. Marcus (CFO) objected to pricing, asking for 20% discount or annual prepaid terms..."></textarea>
-        <div style="margin-top: 14px;">
-          <button id="btn-log" class="btn btn-secondary" onclick="logInteraction()">
-            <span>💾 Retain to Hindsight</span>
-          </button>
-        </div>
-      </div>
+  </div>
+  
+  <div class="flex items-center gap-space-xl">
+    <!-- Live Memory Badge -->
+    <div class="flex items-center gap-space-sm">
+      <div id="memory-pulse" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+      <span class="font-label-sm text-label-sm text-outline">Hindsight Cloud Connected</span>
     </div>
-
-    <!-- Right Column: Intelligence Output -->
-    <div class="card output-card">
-      <div class="action-bar">
-        <button id="btn-brief" class="btn btn-primary" onclick="getBriefing()" style="flex: 1;">
-          <span>📋 Get Deal Briefing</span>
-        </button>
-        <button id="btn-pattern" class="btn btn-accent" onclick="getPatterns()" style="flex: 1;">
-          <span>🔍 Spot Cross-Deal Patterns</span>
-        </button>
-      </div>
-
-      <div class="output-header">
-        <div class="output-title" id="output-title">Deal Briefing Canvas</div>
-        <div id="status-indicator" style="font-size: 13px; color: var(--text-muted);">Ready</div>
-      </div>
-
-      <div class="output-body" id="output-content">
-Select a deal from the left and click <strong>"Get Deal Briefing"</strong> to recall all previous meetings, objections, and stakeholders from Hindsight memory.
-
-Or click <strong>"Spot Cross-Deal Patterns"</strong> to autonomously analyze recurring patterns across all deals.
+    <div class="h-4 w-[1px] bg-outline-variant"></div>
+    <!-- Model Badge -->
+    <div class="flex items-center gap-1.5 bg-surface-container-low px-2 py-0.5 rounded border border-outline-variant font-label-sm text-label-sm text-on-surface-variant">
+      <span class="material-symbols-outlined text-[13px] text-primary">bolt</span>
+      <span>Groq openai/gpt-oss-120b</span>
+    </div>
+    <div class="h-4 w-[1px] bg-outline-variant"></div>
+    <div class="flex items-center gap-space-md">
+      <button onclick="getPatterns()" title="Scan Cross-Deal Patterns" class="text-outline hover:text-primary flex items-center justify-center p-space-xs transition-colors" type="button">
+        <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+      </button>
+      <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-xs">
+        SO
       </div>
     </div>
   </div>
+</header>
+
+<!-- FAR LEFT NAVIGATION ASIDE -->
+<aside class="fixed left-0 top-10 bottom-0 w-60 bg-surface-container-low border-r border-outline-variant z-40 flex flex-col">
+  <div class="px-space-lg py-space-md border-b border-outline-variant flex items-center justify-between">
+    <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Pipeline Views</span>
+    <span class="material-symbols-outlined text-[16px] text-outline cursor-pointer hover:text-on-surface">filter_list</span>
+  </div>
+  <nav class="flex-1 overflow-y-auto py-space-sm">
+    <div class="px-space-md mb-space-sm">
+      <span class="font-label-sm text-label-sm text-outline uppercase px-space-md">Views</span>
+    </div>
+    <div class="flex flex-col gap-space-xs px-space-sm mb-space-lg">
+      <a class="flex items-center justify-between px-space-md py-space-xs rounded bg-surface-container-high text-on-surface font-semibold border-l-2 border-primary" href="#">
+        <span class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px] text-primary">view_kanban</span>Active Pipeline</span>
+        <span id="nav-total-count" class="font-label-sm text-label-sm text-outline">4</span>
+      </a>
+      <a onclick="filterByStage('closing')" class="flex items-center justify-between px-space-md py-space-xs rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer">
+        <span class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px]">alarm_on</span>Closing Soon</span>
+        <span class="font-label-sm text-label-sm text-outline">2</span>
+      </a>
+      <a onclick="filterByStage('risk')" class="flex items-center justify-between px-space-md py-space-xs rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer">
+        <span class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px] text-amber-600">warning</span>High Risk Deals</span>
+        <span class="font-label-sm text-label-sm text-tertiary-container font-semibold">1</span>
+      </a>
+      <a onclick="getPatterns()" class="flex items-center justify-between px-space-md py-space-xs rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer">
+        <span class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px] text-primary">insights</span>Cross-Deal Patterns</span>
+        <span class="font-label-sm text-label-sm bg-primary/10 text-primary px-1 rounded">AI</span>
+      </a>
+    </div>
+
+    <div class="px-space-md mb-space-sm">
+      <span class="font-label-sm text-label-sm text-outline uppercase px-space-md">Live Integrations</span>
+    </div>
+    <div class="flex flex-col gap-1 px-space-md font-body-sm text-body-sm text-on-surface-variant">
+      <div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Hindsight Memory API</div>
+      <div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Groq LPU Inference</div>
+      <div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> CRM Call Transcripts</div>
+    </div>
+  </nav>
+  
+  <div class="p-space-md border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+    <div class="flex items-center gap-space-sm">
+      <span class="material-symbols-outlined text-[16px] text-outline">storage</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">Hindsight Synced</span>
+    </div>
+    <span class="material-symbols-outlined text-[16px] text-outline cursor-pointer hover:text-on-surface">tune</span>
+  </div>
+</aside>
+
+<!-- MAIN APP BODY (Shifted by 240px for Aside) -->
+<div class="pl-60">
+  <main class="relative pt-10 min-h-screen bg-surface-container-lowest w-full">
+    <div class="flex flex-row w-full h-[calc(100vh-2.5rem)] overflow-hidden bg-surface-container-lowest">
+      
+      <!-- MIDDLE COLUMN: Deal Queue / Master Index (approx 310px) -->
+      <aside class="w-[310px] flex-shrink-0 flex flex-col bg-surface-container-lowest border-r border-outline-variant h-full select-none">
+        
+        <!-- Queue Header & Filter Controls -->
+        <div class="p-space-md border-b border-outline-variant bg-surface-container-low/50 flex flex-col gap-space-sm">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-space-xs">
+              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Active Deals</span>
+              <span id="deal-count-badge" class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded font-bold">4</span>
+            </div>
+            <div class="flex items-center gap-space-xs text-on-surface-variant">
+              <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Sort:</span>
+              <button class="font-label-sm text-label-sm text-on-surface hover:text-primary flex items-center gap-0.5" type="button">
+                <span>Value</span>
+                <span class="material-symbols-outlined text-[13px]">expand_more</span>
+              </button>
+            </div>
+          </div>
+          <!-- Inline Quick Filter -->
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-2 text-[14px] text-outline pointer-events-none">filter_alt</span>
+            <input id="deal-filter-input" oninput="onFilterChange(this.value)" class="w-full h-7 pl-6 pr-8 bg-surface-container-lowest border border-outline-variant rounded font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="Filter deals..." type="text"/>
+            <kbd class="absolute right-1.5 font-label-sm text-label-sm text-outline border border-outline-variant rounded px-1 bg-surface-container-low leading-tight">⌘F</kbd>
+          </div>
+        </div>
+
+        <!-- Scrollable Deal Master List -->
+        <div id="deal-list-container" class="flex-1 overflow-y-auto divide-y divide-surface-container">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Quick Metrics Footer -->
+        <div class="p-space-sm border-t border-outline-variant bg-surface-container-low/40 flex items-center justify-between font-label-sm text-label-sm text-outline">
+          <span>Pipeline: <strong id="pipeline-total" class="text-on-surface font-data-metric font-semibold">$337k</strong></span>
+          <span>Deals: <strong id="pipeline-deals-count" class="text-on-surface font-data-metric font-semibold">4 active</strong></span>
+        </div>
+      </aside>
+
+      <!-- RIGHT COLUMN: Active Deal Workspace -->
+      <section class="flex-1 flex flex-col h-full overflow-y-auto bg-surface">
+        
+        <!-- Top Deal Header Bar -->
+        <header class="sticky top-0 z-20 bg-surface-container-lowest/95 backdrop-blur border-b border-outline-variant px-space-xl py-space-md flex flex-col gap-space-xs">
+          <!-- Breadcrumbs & Quick Shortcuts -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5 font-label-sm text-label-sm text-outline">
+              <span class="hover:text-on-surface cursor-pointer">Deals</span>
+              <span>/</span>
+              <span id="breadcrumb-category" class="hover:text-on-surface cursor-pointer">Enterprise Opportunity</span>
+              <span>/</span>
+              <span id="breadcrumb-company" class="text-on-surface font-medium">ApexLogistics</span>
+            </div>
+            <div class="flex items-center gap-space-sm">
+              <button onclick="getBriefing()" class="h-6 px-2 text-on-surface-variant hover:text-primary border border-outline-variant hover:bg-surface-container-low rounded font-body-sm text-body-sm flex items-center gap-1 transition-colors" type="button">
+                <span class="material-symbols-outlined text-[13px]">refresh</span>
+                <span>Refresh Briefing</span>
+              </button>
+              <button onclick="getPatterns()" class="h-6 px-2 text-on-primary bg-primary hover:bg-primary-container rounded font-body-sm text-body-sm flex items-center gap-1 transition-colors" type="button">
+                <span class="material-symbols-outlined text-[13px]">auto_awesome</span>
+                <span>Spot Patterns</span>
+              </button>
+              <kbd class="h-6 px-1.5 bg-surface-container-low border border-outline-variant rounded font-label-sm text-label-sm text-outline flex items-center">⌘B</kbd>
+            </div>
+          </div>
+
+          <!-- Deal Title & Primary Metadata Ribbon -->
+          <div class="flex flex-wrap items-center justify-between gap-space-md mt-1">
+            <div class="flex items-center gap-space-md">
+              <h1 id="header-company-name" class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-semibold">ApexLogistics</h1>
+              <span id="header-stage-badge" class="bg-primary-fixed text-on-primary-fixed border border-primary/20 px-2 py-0.5 rounded font-label-sm text-label-sm font-semibold tracking-tight">
+                Stage 3 · Proposal Review
+              </span>
+              <span id="header-risk-badge" class="flex items-center gap-1 font-label-sm text-label-sm bg-error-container text-on-error-container px-2 py-0.5 rounded font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-error"></span> Risk: Price Objection
+              </span>
+            </div>
+            
+            <!-- Tabular Value Callouts -->
+            <div class="flex items-center gap-space-xl">
+              <div class="flex flex-col text-right">
+                <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">ARR Contract</span>
+                <span id="header-deal-value" class="font-data-metric-lg text-data-metric-lg text-on-surface tabular-nums font-bold">$72,000</span>
+              </div>
+              <div class="h-6 w-[1px] bg-outline-variant"></div>
+              <div class="flex flex-col">
+                <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Owner</span>
+                <span id="header-rep-name" class="font-body-md text-body-md text-on-surface font-medium">Alex Rivera</span>
+              </div>
+              <div class="h-6 w-[1px] bg-outline-variant"></div>
+              <div class="flex flex-col">
+                <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Memory Bank</span>
+                <span class="font-data-metric text-data-metric text-primary font-medium">deal-intel</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Stacked Content Container -->
+        <div class="p-space-xl flex flex-col gap-space-xl max-w-5xl">
+          
+          <!-- ========================================== -->
+          <!-- SECTION 1: LOG AN INTERACTION             -->
+          <!-- ========================================== -->
+          <section class="border border-outline-variant rounded bg-surface-container-lowest p-space-lg flex flex-col gap-space-md shadow-xs">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-space-md">
+                <span class="font-headline-sm text-headline-sm text-on-surface font-semibold flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px] text-primary">add_comment</span>
+                  Log Interaction Note
+                </span>
+                <!-- Segmented Toggle -->
+                <div class="flex bg-surface-container-low p-0.5 rounded border border-outline-variant font-body-sm text-body-sm">
+                  <button id="type-call" onclick="setType('Call')" class="px-2.5 py-0.5 rounded bg-surface-container-lowest font-medium text-on-surface border border-outline-variant/60 shadow-xs" type="button">Call</button>
+                  <button id="type-email" onclick="setType('Email')" class="px-2.5 py-0.5 rounded text-on-surface-variant hover:text-on-surface" type="button">Email</button>
+                  <button id="type-demo" onclick="setType('Demo')" class="px-2.5 py-0.5 rounded text-on-surface-variant hover:text-on-surface" type="button">Demo</button>
+                  <button id="type-note" onclick="setType('Note')" class="px-2.5 py-0.5 rounded text-on-surface-variant hover:text-on-surface" type="button">Note</button>
+                </div>
+              </div>
+              <div class="flex items-center gap-space-sm font-label-sm text-label-sm text-outline">
+                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                <span id="log-time-indicator">Today, Just now</span>
+              </div>
+            </div>
+
+            <!-- Structured Entry Input -->
+            <div class="relative">
+              <textarea id="interaction-input" class="w-full p-2.5 bg-surface-container-low/40 border border-outline-variant rounded font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:bg-surface-container-lowest transition-all resize-none" placeholder="Key points discussed, objections raised, stakeholder sentiments, competitor quotes..." rows="3"></textarea>
+            </div>
+
+            <!-- Contextual Controls & Submit Bottom-Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-space-md pt-1">
+              <div class="flex items-center gap-space-sm flex-wrap">
+                <!-- Rep Badge -->
+                <div class="flex items-center gap-1 border border-outline-variant bg-surface-container-lowest px-2 py-1 rounded font-body-sm text-body-sm text-on-surface">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  <span id="log-rep-name">Alex Rivera</span>
+                </div>
+                <!-- Stakeholder Tag -->
+                <span class="font-label-sm text-label-sm text-outline uppercase ml-1">Context:</span>
+                <span id="log-stakeholder-chip" class="bg-surface-container border border-outline-variant/80 font-label-sm text-label-sm px-1.5 py-0.5 rounded text-on-surface-variant flex items-center gap-1">
+                  @Marcus Vance (CFO)
+                </span>
+              </div>
+              
+              <!-- Action Trigger and Hint -->
+              <div class="flex items-center gap-space-md">
+                <span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[14px] text-primary">auto_awesome</span>
+                  Auto-retained to Hindsight Bank
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <button id="btn-log-entry" onclick="submitLog()" class="h-7 px-3 bg-inverse-surface text-inverse-on-surface rounded font-body-md text-body-md font-medium hover:bg-on-surface transition-colors flex items-center gap-1.5" type="button">
+                    <span>Log Entry</span>
+                  </button>
+                  <kbd class="font-label-sm text-label-sm text-outline border border-outline-variant bg-surface-container-low px-1 rounded leading-tight">⌘↵</kbd>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ========================================== -->
+          <!-- SECTION 2: DEAL BRIEFING                   -->
+          <!-- ========================================== -->
+          <section class="border border-outline-variant rounded bg-surface-container-lowest overflow-hidden shadow-xs">
+            <!-- Structured Card Header -->
+            <div class="bg-surface-container-low px-space-lg py-space-sm border-b border-outline-variant flex items-center justify-between">
+              <div class="flex items-center gap-space-sm">
+                <span class="material-symbols-outlined text-[16px] text-primary">analytics</span>
+                <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Deal Intelligence Briefing</span>
+                <span id="briefing-status-label" class="font-label-sm text-label-sm text-outline border-l border-outline-variant pl-space-sm">Generated by Groq & Hindsight</span>
+              </div>
+              <div class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px] text-primary">verified</span>
+                <span id="memories-recalled-tag">15 Memories Synced</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Markdown / Formatted Briefing Container -->
+            <div id="briefing-content-container" class="p-space-lg">
+              <!-- Loading Skeleton / Content will be injected here -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-space-xl">
+                <!-- Field 1: Objections & Hurdles -->
+                <div class="flex flex-col gap-space-xs">
+                  <div class="flex items-center justify-between pb-1 border-b border-surface-container">
+                    <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Objections & Hurdles</span>
+                    <span class="font-label-sm text-label-sm text-error font-medium">Critical</span>
+                  </div>
+                  <div id="card-objections" class="font-body-sm text-body-sm text-on-surface mt-1 leading-relaxed">
+                    Loading deal objections from memory...
+                  </div>
+                </div>
+
+                <!-- Field 2: Key Stakeholders & Sentiment -->
+                <div class="flex flex-col gap-space-xs">
+                  <div class="flex items-center justify-between pb-1 border-b border-surface-container">
+                    <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Key Stakeholders & Sentiment</span>
+                    <span class="font-label-sm text-label-sm text-primary font-medium">Active</span>
+                  </div>
+                  <div id="card-stakeholders" class="font-body-sm text-body-sm text-on-surface mt-1 leading-relaxed">
+                    Loading stakeholders...
+                  </div>
+                </div>
+
+                <!-- Field 3: Competitor Mentions -->
+                <div class="flex flex-col gap-space-xs">
+                  <div class="flex items-center justify-between pb-1 border-b border-surface-container">
+                    <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Competitor Mentions & FUD</span>
+                    <span class="font-label-sm text-label-sm text-outline">Market Pressure</span>
+                  </div>
+                  <div id="card-competitors" class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-relaxed">
+                    Scanning competitor mentions...
+                  </div>
+                </div>
+
+                <!-- Field 4: Suggested Next Move -->
+                <div class="flex flex-col gap-space-xs">
+                  <div class="flex items-center justify-between pb-1 border-b border-surface-container">
+                    <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Suggested Next Move</span>
+                    <span class="font-label-sm text-label-sm text-primary font-medium">Recommended Tactic</span>
+                  </div>
+                  <div class="mt-1 p-space-md bg-surface-container-low rounded border border-outline-variant flex flex-col gap-space-sm">
+                    <div class="flex items-start gap-2">
+                      <span class="material-symbols-outlined text-[16px] text-primary mt-0.5">near_me</span>
+                      <p id="card-nextmove" class="font-body-sm text-body-sm text-on-surface font-medium leading-normal">
+                        Analyzing deal history to prescribe next talking point...
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Raw Structured Output Accordion -->
+              <details class="mt-4 pt-3 border-t border-surface-container">
+                <summary class="font-label-sm text-label-sm text-outline cursor-pointer hover:text-on-surface">View Complete LLM Briefing Transcript</summary>
+                <div id="raw-briefing-text" class="mt-2 p-3 bg-surface-container-low/50 rounded font-mono text-xs whitespace-pre-wrap leading-relaxed text-on-surface"></div>
+              </details>
+            </div>
+          </section>
+
+          <!-- ========================================== -->
+          <!-- SECTION 3: CROSS-DEAL PATTERN              -->
+          <!-- ========================================== -->
+          <section class="border-2 border-primary-container/40 bg-surface-container-high/30 rounded p-space-lg flex flex-col gap-space-sm relative overflow-hidden shadow-xs">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-space-sm">
+                <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                <span class="font-label-sm text-label-sm font-semibold tracking-wider uppercase text-primary">
+                  Proactive Cross-Deal Intelligence Pattern
+                </span>
+              </div>
+              <span id="pattern-meta-badge" class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-lowest border border-outline-variant/60 px-2 py-0.5 rounded font-mono">
+                Hindsight Global Bank Scan
+              </span>
+            </div>
+
+            <!-- Main Observation Headline -->
+            <h2 id="pattern-headline" class="font-headline-md text-headline-md text-on-surface tracking-tight font-semibold mt-1">
+              "Annual upfront billing + 15% discount flips price-objection stalls into Closed-Won"
+            </h2>
+
+            <!-- Analysis Body -->
+            <div id="pattern-body" class="font-body-md text-body-md text-on-surface-variant leading-relaxed space-y-2">
+              Click <strong>"Spot Patterns"</strong> above or below to run cross-deal intelligence across all accounts in Hindsight memory.
+            </div>
+
+            <!-- Action Bar -->
+            <div class="mt-2 pt-space-sm border-t border-outline-variant/50 flex flex-wrap items-center justify-between gap-space-md">
+              <div class="flex items-center gap-space-md font-label-sm text-label-sm text-outline">
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px]">dataset</span> Correlated across all deals in Hindsight memory
+                </span>
+              </div>
+              <button onclick="getPatterns()" id="btn-run-pattern" class="h-7 px-3 bg-primary text-on-primary rounded font-body-sm text-body-sm font-medium hover:bg-primary-container flex items-center gap-1.5 transition-colors shadow-xs" type="button">
+                <span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+                <span>Spot Cross-Deal Patterns</span>
+              </button>
+            </div>
+          </section>
+
+        </div>
+      </section>
+    </div>
+  </main>
 </div>
 
-<div id="toast" class="toast"></div>
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="fixed bottom-6 right-6 bg-surface-container-highest border border-outline-variant text-on-surface px-4 py-2.5 rounded shadow-lg z-50 transition-opacity duration-300 opacity-0 pointer-events-none text-body-sm font-medium flex items-center gap-2">
+  <span id="toast-icon" class="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+  <span id="toast-msg">Notification</span>
+</div>
 
 <script>
-  let currentDeals = [];
+  let allDeals = [];
+  let currentDealId = "deal_001";
+  let activeInteractionType = "Call";
 
-  // Initialize deals on page load
-  async function init() {
+  const DEAL_METADATA = {
+    "deal_001": { stage: "Stage 3 · Proposal Review", risk: "Price Objection", riskType: "error", category: "Supply Chain Tech", chip: "@Marcus Vance (CFO)" },
+    "deal_002": { stage: "Stage 4 · Closed-Won", risk: "Competitor Pressure", riskType: "secondary", category: "Cloud Infrastructure", chip: "@Rachel Adams (Procurement)" },
+    "deal_003": { stage: "Stage 2 · Stalled (Board Freeze)", risk: "Timeline Delay", riskType: "error", category: "Healthcare SaaS", chip: "@Linda Morales (Compliance)" },
+    "deal_004": { stage: "Stage 1 · Discovery Scheduled", risk: "Fresh Lead", riskType: "primary", category: "Cybersecurity", chip: "@Vikram Rao (Infra)" },
+  };
+
+  async function loadDeals() {
     try {
       const res = await fetch('/deals');
-      currentDeals = await res.json();
-      const select = document.getElementById('deal-select');
-      select.innerHTML = '';
+      allDeals = await res.json();
+      renderDealList(allDeals);
       
-      if (currentDeals.length === 0) {
-        select.innerHTML = '<option value="">No deals found. Run seed script.</option>';
-        return;
+      if (allDeals.length > 0) {
+        selectDeal(allDeals[0].deal_id);
       }
-
-      currentDeals.forEach((deal, idx) => {
-        const opt = document.createElement('option');
-        opt.value = deal.deal_id;
-        opt.textContent = `${deal.company} (${deal.deal_id}) - ${deal.deal_value}`;
-        select.appendChild(opt);
-      });
-
-      onDealChange();
     } catch (err) {
       console.error("Failed to load deals:", err);
-      showToast("Error connecting to Deal Intel Agent backend", true);
+      showToast("Backend connection error: Check FastAPI server", true);
     }
   }
 
-  function onDealChange() {
-    const select = document.getElementById('deal-select');
-    const selectedId = select.value;
-    const deal = currentDeals.find(d => d.deal_id === selectedId);
-    
-    if (deal) {
-      document.getElementById('deal-info').style.display = 'block';
-      document.getElementById('info-company').textContent = deal.company;
-      document.getElementById('info-value').textContent = deal.deal_value || "$0";
-      document.getElementById('info-rep').textContent = deal.rep_name;
-    }
+  function renderDealList(deals) {
+    const container = document.getElementById('deal-list-container');
+    container.innerHTML = '';
+
+    document.getElementById('deal-count-badge').textContent = deals.length;
+    document.getElementById('nav-total-count').textContent = deals.length;
+    document.getElementById('pipeline-deals-count').textContent = `${deals.length} active`;
+
+    deals.forEach(deal => {
+      const meta = DEAL_METADATA[deal.deal_id] || { stage: "Active", risk: "Evaluating", riskType: "primary", chip: "@Evaluator" };
+      const isActive = deal.deal_id === currentDealId;
+
+      const item = document.createElement('div');
+      item.className = `p-space-md cursor-pointer transition-colors border-l-[3px] ${
+        isActive 
+          ? 'bg-surface-container-high/60 border-primary' 
+          : 'hover:bg-surface-container-low border-transparent'
+      }`;
+      item.onclick = () => selectDeal(deal.deal_id);
+
+      item.innerHTML = `
+        <div class="flex items-start justify-between gap-space-sm mb-0.5">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="w-1.5 h-1.5 rounded-full ${meta.riskType === 'error' ? 'bg-error' : meta.riskType === 'secondary' ? 'bg-secondary-container' : 'bg-primary'} flex-shrink-0"></span>
+            <span class="font-headline-sm text-headline-sm text-on-surface truncate font-semibold">${deal.company}</span>
+          </div>
+          <span class="font-data-metric text-data-metric text-on-surface tabular-nums flex-shrink-0 font-bold">${deal.deal_value || '$0'}</span>
+        </div>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm">
+          <span class="truncate">${deal.rep_name}</span>
+          <span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">${deal.deal_id}</span>
+        </div>
+        <div class="mt-1 flex items-center justify-between font-label-sm text-label-sm text-outline">
+          <span class="${meta.riskType === 'error' ? 'text-error font-medium' : 'text-primary font-medium'} flex items-center gap-1">
+            <span class="material-symbols-outlined text-[12px]">${meta.riskType === 'error' ? 'warning' : 'flag'}</span> ${meta.risk}
+          </span>
+          <span>${meta.stage.split('·')[0]}</span>
+        </div>
+      `;
+      container.appendChild(item);
+    });
   }
 
-  // Action: Log interaction
-  async function logInteraction() {
-    const dealId = document.getElementById('deal-select').value;
-    const text = document.getElementById('log-text').value.trim();
+  function selectDeal(dealId) {
+    currentDealId = dealId;
+    const deal = allDeals.find(d => d.deal_id === dealId) || { company: dealId, rep_name: "Sales Rep", deal_value: "$50,000", deal_id: dealId };
+    const meta = DEAL_METADATA[dealId] || { stage: "Active Pipeline", risk: "Standard Evaluation", riskType: "primary", category: "B2B SaaS", chip: "@Buyer" };
 
-    if (!dealId) {
-      showToast("Please select a deal first", true);
-      return;
-    }
+    // Update Header
+    document.getElementById('header-company-name').textContent = deal.company;
+    document.getElementById('header-deal-value').textContent = deal.deal_value || "$0";
+    document.getElementById('header-rep-name').textContent = deal.rep_name;
+    document.getElementById('breadcrumb-company').textContent = deal.company;
+    document.getElementById('breadcrumb-category').textContent = meta.category;
+    document.getElementById('header-stage-badge').textContent = meta.stage;
+    document.getElementById('header-risk-badge').innerHTML = `
+      <span class="w-1.5 h-1.5 rounded-full ${meta.riskType === 'error' ? 'bg-error' : 'bg-primary'}"></span> Risk: ${meta.risk}
+    `;
+
+    // Update Log Section
+    document.getElementById('log-rep-name').textContent = deal.rep_name;
+    document.getElementById('log-stakeholder-chip').textContent = meta.chip;
+
+    // Refresh Active State in List
+    renderDealList(allDeals);
+
+    // Fetch Briefing
+    getBriefing();
+  }
+
+  function setType(type) {
+    activeInteractionType = type;
+    ['Call', 'Email', 'Demo', 'Note'].forEach(t => {
+      const btn = document.getElementById(`type-${t.toLowerCase()}`);
+      if (t === type) {
+        btn.className = "px-2.5 py-0.5 rounded bg-surface-container-lowest font-medium text-on-surface border border-outline-variant/60 shadow-xs";
+      } else {
+        btn.className = "px-2.5 py-0.5 rounded text-on-surface-variant hover:text-on-surface";
+      }
+    });
+  }
+
+  async function submitLog() {
+    const input = document.getElementById('interaction-input');
+    const text = input.value.trim();
     if (!text) {
-      showToast("Please enter interaction notes to log", true);
+      showToast("Please enter interaction notes before logging", true);
       return;
     }
 
-    const btn = document.getElementById('btn-log');
+    const btn = document.getElementById('btn-log-entry');
     btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> Retaining memory...';
+    btn.innerHTML = `<span class="material-symbols-outlined text-[14px] spinner">progress_activity</span> <span>Retaining to Hindsight...</span>`;
 
     try {
-      const res = await fetch(`/deals/${dealId}/log`, {
+      const fullText = `[${activeInteractionType}] ${text}`;
+      const res = await fetch(`/deals/${currentDealId}/log`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text: fullText })
       });
 
       if (!res.ok) {
@@ -451,70 +653,92 @@ Or click <strong>"Spot Cross-Deal Patterns"</strong> to autonomously analyze rec
         throw new Error(err.detail || 'Log failed');
       }
 
-      document.getElementById('log-text').value = '';
+      input.value = '';
+      btn.innerHTML = `<span>Saved!</span>`;
       showToast("✅ Successfully retained into Hindsight persistent memory!");
-      // Automatically refresh briefing
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Log Entry</span>`;
+      }, 1500);
+
+      // Auto-refresh briefing
       getBriefing();
     } catch (err) {
-      showToast("Error: " + err.message, true);
-    } finally {
+      showToast(err.message, true);
       btn.disabled = false;
-      btn.innerHTML = '<span>💾 Retain to Hindsight</span>';
+      btn.innerHTML = `<span>Log Entry</span>`;
     }
   }
 
-  // Action: Get Briefing
   async function getBriefing() {
-    const dealId = document.getElementById('deal-select').value;
-    if (!dealId) {
-      showToast("Please select a deal first", true);
-      return;
-    }
-
-    const btn = document.getElementById('btn-brief');
-    const title = document.getElementById('output-title');
-    const body = document.getElementById('output-content');
-    const status = document.getElementById('status-indicator');
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> Recalling Hindsight memory...';
-    title.textContent = `Recalling Memory for ${dealId}...`;
-    status.textContent = 'Querying Hindsight & Groq...';
-    body.textContent = 'Recalling interaction logs and generating structured briefing...';
+    const statusLabel = document.getElementById('briefing-status-label');
+    const memoryTag = document.getElementById('memories-recalled-tag');
+    statusLabel.innerHTML = `<span class="flex items-center gap-1 text-primary"><span class="material-symbols-outlined text-[13px] spinner">sync</span> Recalling Hindsight Memory & Generating Briefing...</span>`;
 
     try {
-      const res = await fetch(`/deals/${dealId}/brief`);
+      const res = await fetch(`/deals/${currentDealId}/brief`);
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.detail || 'Briefing failed');
       }
 
       const data = await res.json();
-      title.textContent = `📋 Briefing: ${data.company || dealId}`;
-      status.textContent = `Recalled ${data.recalled_count} memories from Hindsight`;
-      body.innerHTML = formatMarkdown(data.briefing);
+      memoryTag.textContent = `${data.recalled_count} Memories Recalled`;
+      statusLabel.textContent = `Generated by Groq openai/gpt-oss-120b`;
+
+      document.getElementById('raw-briefing-text').textContent = data.briefing;
+
+      // Parse structured sections into cards
+      parseBriefingIntoCards(data.briefing);
     } catch (err) {
-      body.textContent = "Error loading briefing: " + err.message;
-      status.textContent = "Error";
+      statusLabel.textContent = `Briefing Error: ${err.message}`;
       showToast(err.message, true);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<span>📋 Get Deal Briefing</span>';
     }
   }
 
-  // Action: Spot Cross-Deal Patterns
+  function parseBriefingIntoCards(markdown) {
+    const lower = markdown.toLowerCase();
+
+    // Default placeholders
+    let objections = "No specific objections recorded in deal memory.";
+    let stakeholders = "Key stakeholders active in evaluation.";
+    let competitors = "No competitor friction surfaced yet.";
+    let nextMove = "Proceed with scheduled follow-up.";
+
+    // Parse Sections via Regex
+    const objMatch = markdown.match(/(?:Objections|Objection Raised)[^:\n]*:?\s*([\s\S]*?)(?=(?:Stakeholders|Competitor|Suggested Next Move|\n\n##|\Z))/i);
+    const stMatch = markdown.match(/(?:Stakeholders|Key Stakeholders)[^:\n]*:?\s*([\s\S]*?)(?=(?:Competitor|Suggested Next Move|Objection|\n\n##|\Z))/i);
+    const compMatch = markdown.match(/(?:Competitors|Competitor Mentions)[^:\n]*:?\s*([\s\S]*?)(?=(?:Suggested Next Move|Stakeholders|Objection|\n\n##|\Z))/i);
+    const nextMatch = markdown.match(/(?:Suggested Next Move|Suggested Talking Point|Next Move)[^:\n]*:?\s*([\s\S]*?)(?=(?:\n\n##|\Z))/i);
+
+    if (objMatch && objMatch[1].trim()) objections = cleanMarkdown(objMatch[1]);
+    if (stMatch && stMatch[1].trim()) stakeholders = cleanMarkdown(stMatch[1]);
+    if (compMatch && compMatch[1].trim()) competitors = cleanMarkdown(compMatch[1]);
+    if (nextMatch && nextMatch[1].trim()) nextMove = cleanMarkdown(nextMatch[1]);
+
+    document.getElementById('card-objections').innerHTML = objections;
+    document.getElementById('card-stakeholders').innerHTML = stakeholders;
+    document.getElementById('card-competitors').innerHTML = competitors;
+    document.getElementById('card-nextmove').innerHTML = nextMove;
+  }
+
+  function cleanMarkdown(text) {
+    return text.trim()
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^[-\*]\s+/gm, '• ')
+      .replace(/\n/g, '<br/>');
+  }
+
   async function getPatterns() {
-    const btn = document.getElementById('btn-pattern');
-    const title = document.getElementById('output-title');
-    const body = document.getElementById('output-content');
-    const status = document.getElementById('status-indicator');
+    const btn = document.getElementById('btn-run-pattern');
+    const headline = document.getElementById('pattern-headline');
+    const body = document.getElementById('pattern-body');
+    const meta = document.getElementById('pattern-meta-badge');
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> Scanning all deals...';
-    title.textContent = '🔍 Cross-Deal Pattern Intelligence';
-    status.textContent = 'Synthesizing global deal memories...';
-    body.textContent = 'Recalling all objections, competitor tactics, and closed deals across Hindsight memory...';
+    btn.innerHTML = `<span class="material-symbols-outlined text-[14px] spinner">progress_activity</span> <span>Scanning all deals...</span>`;
+    headline.textContent = "Analyzing Global Memory Corpus across all Deals...";
+    body.innerHTML = `<span class="text-outline">Querying Hindsight Cloud across all deals and synthesizing winning sales patterns with Groq...</span>`;
 
     try {
       const res = await fetch('/patterns');
@@ -524,39 +748,86 @@ Or click <strong>"Spot Cross-Deal Patterns"</strong> to autonomously analyze rec
       }
 
       const data = await res.json();
-      title.textContent = '🔍 Proactive Cross-Deal Pattern Detected';
-      status.textContent = `Analyzed ${data.deals_count} historical memory entries`;
+      meta.textContent = `Analyzed ${data.deals_count} Memories Across All Deals`;
+      
+      // Parse Pattern Headline & Body
+      const lines = data.pattern.split('\n');
+      const firstLine = lines.find(l => l.trim().length > 15) || "Recurring Sales Pattern Identified";
+      headline.textContent = firstLine.replace(/^[#\*\-]+\s*/, '').replace(/\*\*/g, '');
+
       body.innerHTML = formatMarkdown(data.pattern);
+      showToast("🔍 Cross-deal pattern successfully detected!");
     } catch (err) {
-      body.textContent = "Error detecting patterns: " + err.message;
-      status.textContent = "Error";
+      headline.textContent = "Pattern Detection Stalled";
+      body.textContent = err.message;
       showToast(err.message, true);
     } finally {
       btn.disabled = false;
-      btn.innerHTML = '<span>🔍 Spot Cross-Deal Patterns</span>';
+      btn.innerHTML = `<span class="material-symbols-outlined text-[14px]">auto_awesome</span> <span>Spot Cross-Deal Patterns</span>`;
     }
   }
 
   function formatMarkdown(text) {
     if (!text) return '';
-    // Basic formatting for headers, bold, bullets
     return text
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2 style="font-size: 20px; margin: 12px 0 8px;">$1</h2>')
-      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-      .replace(/^\- (.*$)/gim, '<li>$1</li>')
-      .replace(/\n\n/g, '<br><br>');
+      .replace(/^### (.*$)/gim, '<h3 class="font-headline-sm font-semibold text-on-surface mt-2 mb-1">$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2 class="font-headline-md font-bold text-on-surface mt-3 mb-1">$1</h2>')
+      .replace(/\*\*(.*?)\*\*/gim, '<strong class="text-on-surface font-semibold">$1</strong>')
+      .replace(/^-\s+(.*$)/gim, '<li class="ml-4 list-disc text-body-sm">$1</li>')
+      .replace(/\n\n/g, '<div class="h-2"></div>');
+  }
+
+  function onFilterChange(query) {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+      renderDealList(allDeals);
+      return;
+    }
+    const filtered = allDeals.filter(d => 
+      d.company.toLowerCase().includes(q) || 
+      d.rep_name.toLowerCase().includes(q) ||
+      d.deal_id.toLowerCase().includes(q)
+    );
+    renderDealList(filtered);
+  }
+
+  function filterByStage(type) {
+    if (type === 'risk') {
+      const filtered = allDeals.filter(d => DEAL_METADATA[d.deal_id]?.riskType === 'error');
+      renderDealList(filtered);
+    } else {
+      renderDealList(allDeals);
+    }
   }
 
   function showToast(msg, isError = false) {
     const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.style.borderColor = isError ? 'var(--danger)' : 'var(--accent)';
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    const toastMsg = document.getElementById('toast-msg');
+    const toastIcon = document.getElementById('toast-icon');
+
+    toastMsg.textContent = msg;
+    toastIcon.textContent = isError ? 'error' : 'check_circle';
+    toastIcon.className = `material-symbols-outlined text-[18px] ${isError ? 'text-error' : 'text-emerald-500'}`;
+    toast.classList.remove('opacity-0', 'pointer-events-none');
+    toast.classList.add('opacity-100');
+
+    setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 4000);
   }
 
-  window.addEventListener('DOMContentLoaded', init);
+  // Keyboard Shortcuts: Cmd+Enter to log
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      const input = document.getElementById('interaction-input');
+      if (document.activeElement === input) {
+        submitLog();
+      }
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', loadDeals);
 </script>
 
 </body>
