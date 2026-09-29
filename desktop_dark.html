@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Deal Intelligence Workstation</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-tint": "#c3c0ff",
+            "primary": "#c3c0ff",
+            "primary-container": "#4f46e5",
+            "secondary": "#4edea3",
+            "secondary-container": "#00a572",
+            "tertiary": "#ffb695",
+            "error": "#ffb4ab",
+            "background": "#121316",
+            "surface": "#121316",
+            "surface-dim": "#121316",
+            "surface-container-lowest": "#0d0e11",
+            "surface-container-low": "#17181c",
+            "surface-container": "#1d1e22",
+            "surface-container-high": "#26272c",
+            "surface-container-highest": "#303238",
+            "on-surface": "#e3e2e6",
+            "on-surface-variant": "#9d9bb0",
+            "outline": "#464555",
+            "outline-variant": "#2f3037"
+          },
+          fontFamily: {
+            "sans": ["Geist", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      background-color: #121316;
+      color: #e3e2e6;
+      font-family: 'Geist', sans-serif;
+      overflow: hidden;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #2a2c34;
+      border-radius: 2px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #3b3d47;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col text-[13px] leading-tight select-none">
+<!-- ================= TOP FIXED HEADER (40px) ================= -->
+<header class="h-10 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-3 shrink-0 z-50">
+<!-- Brand / Org -->
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-sm bg-secondary flex items-center justify-center"></div>
+<span class="font-mono text-xs font-semibold tracking-tight text-on-surface">Deal Intelligence</span>
+<span class="text-outline text-xs">/</span>
+<span class="text-xs text-on-surface-variant font-medium">Acme Corp · Sales Ops</span>
+<span class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-mono uppercase bg-primary-container/20 text-primary border border-primary/20">Production</span>
+</div>
+<!-- Center Search Palette Bar -->
+<div class="w-[340px] max-w-sm relative hidden md:block">
+<div class="w-full bg-surface-container-low border border-outline-variant hover:border-outline focus-within:border-primary/60 rounded px-2.5 py-1 flex items-center justify-between transition-colors cursor-pointer text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px] text-on-surface-variant">search</span>
+<span class="text-xs">Search accounts, notes, or signals...</span>
+</div>
+<kbd class="font-mono text-[10px] bg-surface-container-highest px-1.5 py-0.5 rounded text-on-surface border border-outline/30">⌘K</kbd>
+</div>
+</div>
+<!-- Top Right Status & User Chrome -->
+<div class="flex items-center gap-3">
+<!-- Sync Status -->
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant text-[11px] font-mono text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span>Synced 2m ago</span>
+</div>
+<div class="h-4 w-px bg-outline-variant"></div>
+<!-- Quick Action Icons -->
+<button class="w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded hover:bg-surface-container-high transition-colors" title="Command Log">
+<span class="material-symbols-outlined text-[17px]">terminal</span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded hover:bg-surface-container-high transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[17px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded hover:bg-surface-container-high transition-colors" title="Help &amp; Docs">
+<span class="material-symbols-outlined text-[17px]">help</span>
+</button>
+<!-- User Avatar Profile -->
+<div class="flex items-center gap-2 pl-1 cursor-pointer">
+<div class="w-6 h-6 rounded bg-primary-container text-primary flex items-center justify-center font-mono font-medium text-[11px] border border-primary/30">
+          SJ
+        </div>
+<span class="text-xs font-medium text-on-surface hidden lg:inline">Sarah J.</span>
+</div>
+</div>
+</header>
+<!-- ================= DESKTOP BODY VIEWPORT ================= -->
+<div class="flex-1 flex overflow-hidden">
+<!-- 1. LEFT GLOBAL NAVIGATION RAIL (Compact Sidebar ~200px) -->
+<aside class="w-52 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between shrink-0 select-none">
+<div class="flex flex-col p-2 space-y-4">
+<!-- Views Section -->
+<div>
+<div class="px-2 pb-1.5 font-mono text-[10px] tracking-wider text-outline uppercase font-semibold">Deal Streams</div>
+<nav class="space-y-0.5">
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded bg-surface-container text-primary font-medium border border-outline-variant" href="#">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">view_kanban</span>
+<span>Active Pipeline</span>
+</span>
+<span class="font-mono text-[11px] px-1.5 py-0.2 rounded bg-primary/10 text-primary">24</span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>Closing This Month</span>
+</span>
+<span class="font-mono text-[11px] text-on-surface-variant">8</span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary">warning</span>
+<span>Risk Monitoring</span>
+</span>
+<span class="font-mono text-[11px] text-tertiary bg-tertiary/10 px-1 rounded">3</span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">speed</span>
+<span>Deal Velocity</span>
+</span>
+<span class="text-xs text-secondary font-mono">+12%</span>
+</a>
+</nav>
+</div>
+<!-- Priority Focus Queue -->
+<div>
+<div class="px-2 pb-1.5 font-mono text-[10px] tracking-wider text-outline uppercase font-semibold">Priority Focus (3)</div>
+<div class="space-y-1">
+<div class="p-2 rounded bg-surface-container-low border border-primary/30 flex items-center justify-between cursor-pointer">
+<div class="truncate">
+<div class="text-xs font-semibold text-on-surface truncate">CloudScale Inc.</div>
+<div class="text-[10px] font-mono text-tertiary">Technical Validation</div>
+</div>
+<div class="font-mono text-xs font-semibold text-primary shrink-0">$180k</div>
+</div>
+<div class="p-2 rounded bg-surface-container-low/60 hover:bg-surface-container-low border border-outline-variant flex items-center justify-between cursor-pointer transition-colors">
+<div class="truncate">
+<div class="text-xs font-medium text-on-surface-variant truncate">Nexora Robotics</div>
+<div class="text-[10px] font-mono text-on-surface-variant">Commercials</div>
+</div>
+<div class="font-mono text-xs text-on-surface shrink-0">$310k</div>
+</div>
+<div class="p-2 rounded bg-surface-container-low/60 hover:bg-surface-container-low border border-outline-variant flex items-center justify-between cursor-pointer transition-colors">
+<div class="truncate">
+<div class="text-xs font-medium text-on-surface-variant truncate">Acuity Health</div>
+<div class="text-[10px] font-mono text-on-surface-variant">Security Review</div>
+</div>
+<div class="font-mono text-xs text-on-surface shrink-0">$94k</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Left Rail Footer Integration Status -->
+<div class="p-2.5 border-t border-outline-variant bg-surface-container-lowest">
+<div class="flex items-center gap-2 text-[11px] text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+<span class="truncate font-mono">HubSpot &amp; Gong Connected</span>
+</div>
+</div>
+</aside>
+<!-- 2. TWO-COLUMN WORKSTATION CANVAS -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT COLUMN: Deal Queue / Master Index (~310px) -->
+<section class="w-80 bg-surface-container-low border-r border-outline-variant flex flex-col shrink-0 select-none">
+<!-- Controls Bar -->
+<div class="p-2.5 border-b border-outline-variant flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 font-mono text-xs font-semibold text-on-surface">
+<span>All Deals</span>
+<span class="text-[11px] font-normal text-on-surface-variant bg-surface-container-high px-1.5 py-0.2 rounded">14</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-mono text-on-surface-variant hover:text-on-surface cursor-pointer">
+<span>Sort: Risk / Value</span>
+<span class="material-symbols-outlined text-[14px]">unfold_more</span>
+</div>
+</div>
+<!-- Fast Inline Filter -->
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded px-2.5 py-1 text-xs text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/50" placeholder="Filter active deals..." type="text"/>
+<span class="absolute right-2 top-1 text-[10px] font-mono text-outline">⌘F</span>
+</div>
+</div>
+<!-- Scrollable Deals List -->
+<div class="flex-1 overflow-y-auto custom-scroll p-1.5 space-y-1">
+<!-- ACTIVE DEAL ITEM: CloudScale Inc. -->
+<div class="p-2.5 rounded bg-surface-container-high border-l-2 border-primary border-t border-r border-b border-outline-variant flex flex-col gap-1.5 cursor-pointer relative shadow-sm">
+<div class="flex items-start justify-between">
+<div class="font-semibold text-xs text-on-surface truncate">CloudScale Inc.</div>
+<div class="font-mono text-xs font-bold text-secondary">$180,000</div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Sarah Jenkins</span>
+<span class="font-mono text-[10px] text-outline">4h ago</span>
+</div>
+<div class="flex items-center gap-1.5 pt-0.5">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-primary-container/20 text-primary border border-primary/25">Tech Validation</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-error/10 text-error border border-error/20 flex items-center gap-0.5">
+<span class="w-1 h-1 rounded-full bg-error"></span>High Risk
+              </span>
+</div>
+</div>
+<!-- Deal 2: FinTech Global -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high/60 border border-outline-variant/60 flex flex-col gap-1.5 cursor-pointer transition-colors">
+<div class="flex items-start justify-between">
+<div class="font-medium text-xs text-on-surface truncate">FinTech Global</div>
+<div class="font-mono text-xs text-on-surface">$240,000</div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Marcus Vance</span>
+<span class="font-mono text-[10px] text-outline">1d ago</span>
+</div>
+<div class="flex items-center gap-1.5 pt-0.5">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container-highest text-on-surface-variant">Procurement</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-secondary/10 text-secondary">Low Risk</span>
+</div>
+</div>
+<!-- Deal 3: Nexora Robotics -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high/60 border border-outline-variant/60 flex flex-col gap-1.5 cursor-pointer transition-colors">
+<div class="flex items-start justify-between">
+<div class="font-medium text-xs text-on-surface truncate">Nexora Robotics</div>
+<div class="font-mono text-xs text-on-surface">$310,000</div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Elena Rostova</span>
+<span class="font-mono text-[10px] text-outline">1d ago</span>
+</div>
+<div class="flex items-center gap-1.5 pt-0.5">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container-highest text-on-surface-variant">Security Review</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-tertiary/10 text-tertiary">Med Risk</span>
+</div>
+</div>
+<!-- Deal 4: DataStream IO -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high/60 border border-outline-variant/60 flex flex-col gap-1.5 cursor-pointer transition-colors">
+<div class="flex items-start justify-between">
+<div class="font-medium text-xs text-on-surface truncate">DataStream IO</div>
+<div class="font-mono text-xs text-on-surface">$140,000</div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Sarah Jenkins</span>
+<span class="font-mono text-[10px] text-outline">2d ago</span>
+</div>
+<div class="flex items-center gap-1.5 pt-0.5">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container-highest text-on-surface-variant">POC Testing</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-secondary/10 text-secondary">Low Risk</span>
+</div>
+</div>
+<!-- Deal 5: Acuity Health -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high/60 border border-outline-variant/60 flex flex-col gap-1.5 cursor-pointer transition-colors">
+<div class="flex items-start justify-between">
+<div class="font-medium text-xs text-on-surface truncate">Acuity Health</div>
+<div class="font-mono text-xs text-on-surface">$95,000</div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Danica Vance</span>
+<span class="font-mono text-[10px] text-outline">3d ago</span>
+</div>
+<div class="flex items-center gap-1.5 pt-0.5">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container-highest text-on-surface-variant">Executive Brief</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-tertiary/10 text-tertiary">Med Risk</span>
+</div>
+</div>
+<!-- Deal 6: Aether Media -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high/60 border border-outline-variant/60 flex flex-col gap-1.5 cursor-pointer transition-colors">
+<div class="flex items-start justify-between">
+<div class="font-medium text-xs text-on-surface truncate">Aether Media</div>
+<div class="font-mono text-xs text-on-surface">$65,000</div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Sarah Jenkins</span>
+<span class="font-mono text-[10px] text-outline">5d ago</span>
+</div>
+<div class="flex items-center gap-1.5 pt-0.5">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container-highest text-on-surface-variant">Discovery</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-secondary/10 text-secondary">Low Risk</span>
+</div>
+</div>
+</div>
+<!-- Left Column Bottom Telemetry Metric Strip -->
+<div class="p-2 border-t border-outline-variant bg-surface-container-lowest font-mono text-[11px] flex items-center justify-between text-on-surface-variant">
+<span>Pipeline: <strong class="text-on-surface">$1.03M</strong></span>
+<span>Avg Cycle: <strong class="text-on-surface">41d</strong></span>
+</div>
+</section>
+<!-- RIGHT COLUMN: Active Deal Workspace (Expanded Canvas) -->
+<main class="flex-1 flex flex-col bg-surface overflow-y-auto custom-scroll">
+<!-- STICKY BREADCRUMB & CONTEXT HEADER -->
+<div class="sticky top-0 z-40 bg-surface/95 backdrop-blur border-b border-outline-variant px-5 py-3 flex flex-col gap-2.5">
+<!-- Top Row Breadcrumbs + Utility Actions -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 font-mono text-xs text-outline">
+<a class="hover:text-on-surface transition-colors" href="#">Deals</a>
+<span>/</span>
+<span class="text-on-surface-variant">Enterprise Tier</span>
+<span>/</span>
+<span class="text-primary font-medium">CloudScale Inc.</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-mono flex items-center gap-1 transition-colors border border-outline-variant">
+<span class="material-symbols-outlined text-[14px]">link</span>
+<span>Copy Link</span>
+</button>
+<button class="px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-mono flex items-center gap-1 transition-colors border border-outline-variant">
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+<span>Open in Salesforce</span>
+</button>
+<button class="px-2 py-1 rounded bg-primary-container text-on-primary-container hover:bg-primary-container/80 text-xs font-mono flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span>⌘E</span>
+</button>
+</div>
+</div>
+<!-- Bottom Row: Deal Title, Badges, and Primary Metrics Banner -->
+<div class="flex items-end justify-between flex-wrap gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2.5">
+<h1 class="text-xl font-bold tracking-tight text-on-surface">CloudScale Inc.</h1>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-primary-container/20 text-primary border border-primary/30">
+                  Stage 3 · Technical Validation
+                </span>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-error/10 text-error border border-error/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Risk: High
+                </span>
+</div>
+<p class="text-xs text-on-surface-variant">Primary contact: Dan Miller (VP Architecture &amp; Infrastructure) · Next step: AWS Transit Gateway review</p>
+</div>
+<!-- Tabular High-Density Deal Attributes -->
+<div class="flex items-center gap-4 bg-surface-container-low px-3 py-1.5 rounded border border-outline-variant">
+<div>
+<div class="text-[10px] font-mono text-outline uppercase">ARR Contract</div>
+<div class="font-mono text-sm font-bold text-secondary">$180,000</div>
+</div>
+<div class="h-6 w-px bg-outline-variant"></div>
+<div>
+<div class="text-[10px] font-mono text-outline uppercase">Owner</div>
+<div class="text-xs font-medium text-on-surface">Sarah Jenkins</div>
+</div>
+<div class="h-6 w-px bg-outline-variant"></div>
+<div>
+<div class="text-[10px] font-mono text-outline uppercase">Target Close</div>
+<div class="font-mono text-xs text-on-surface">Oct 28, 2024</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MAIN SCROLLABLE CONTENT BODY -->
+<div class="p-5 space-y-4 max-w-6xl w-full">
+<!-- ================= SECTION 1: LOG INTERACTION ================= -->
+<section class="bg-surface-container-low border border-outline-variant rounded-md p-3.5 flex flex-col gap-2.5 shadow-sm">
+<div class="flex items-center justify-between border-b border-outline-variant/60 pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">edit_square</span>
+<span class="font-semibold text-xs text-on-surface">Log Interaction</span>
+<!-- Interaction Type Tabs -->
+<div class="flex items-center gap-1 ml-3 bg-surface-container-lowest p-0.5 rounded border border-outline-variant">
+<button class="px-2 py-0.5 rounded bg-surface-container-high text-xs font-mono text-on-surface font-medium">Call</button>
+<button class="px-2 py-0.5 rounded hover:bg-surface-container text-xs font-mono text-on-surface-variant transition-colors">Email</button>
+<button class="px-2 py-0.5 rounded hover:bg-surface-container text-xs font-mono text-on-surface-variant transition-colors">Demo</button>
+<button class="px-2 py-0.5 rounded hover:bg-surface-container text-xs font-mono text-on-surface-variant transition-colors">Note</button>
+</div>
+</div>
+<div class="font-mono text-[11px] text-outline">
+                Oct 14, 2024 · 14:32 EST
+              </div>
+</div>
+<!-- Notes Editor Area -->
+<div class="relative">
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant focus:border-primary/60 rounded p-2.5 text-xs text-on-surface placeholder:text-outline font-sans focus:outline-none resize-none" placeholder="Take dense notes... e.g. Dan raised concerns on cross-region data residency and query response budgets..." rows="3"></textarea>
+</div>
+<!-- Bottom Row: Tagged Stakeholders & Log Entry Trigger -->
+<div class="flex items-center justify-between flex-wrap gap-2 pt-1">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="text-[11px] font-mono text-outline">Tagged:</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high text-[11px] font-mono text-on-surface border border-outline-variant">
+                  @Dan Miller (CTO)
+                  <span class="material-symbols-outlined text-[12px] text-outline cursor-pointer hover:text-on-surface">close</span>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high text-[11px] font-mono text-on-surface border border-outline-variant">
+                  @Alex Chen (Staff Arch)
+                  <span class="material-symbols-outlined text-[12px] text-outline cursor-pointer hover:text-on-surface">close</span>
+</span>
+<button class="px-1.5 py-0.5 rounded border border-dashed border-outline-variant text-[11px] font-mono text-on-surface-variant hover:text-on-surface hover:border-outline transition-colors">
+                  + Add contact
+                </button>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1 text-[11px] font-mono text-outline">
+<span>Rep:</span>
+<span class="text-on-surface">Sarah J.</span>
+</div>
+<button class="px-3 py-1 rounded bg-primary text-on-primary-fixed font-mono text-xs font-semibold hover:bg-primary-fixed-dim transition-colors flex items-center gap-1 shadow">
+<span>Log Entry</span>
+<span class="text-[10px] opacity-75">⌘↵</span>
+</button>
+</div>
+</div>
+</section>
+<!-- ================= SECTION 2: DEAL INTELLIGENCE BRIEFING ================= -->
+<section class="bg-surface-container-low border border-outline-variant rounded-md p-4 flex flex-col gap-3 shadow-sm">
+<div class="flex items-center justify-between border-b border-outline-variant/60 pb-2.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[17px] text-primary">auto_awesome</span>
+<h2 class="font-semibold text-xs uppercase font-mono tracking-wider text-on-surface">Deal Intelligence Briefing</h2>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-secondary/15 text-secondary border border-secondary/30">AI Synthesis Active</span>
+</div>
+<div class="font-mono text-[11px] text-outline flex items-center gap-1">
+<span>Model Confidence:</span>
+<strong class="text-on-surface font-semibold">94.8%</strong>
+</div>
+</div>
+<!-- Structured 2x2 Dense Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<!-- Grid 1: Objections & Hurdles -->
+<div class="bg-surface-container border border-outline-variant/70 rounded p-3 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-semibold text-tertiary uppercase flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">report</span>
+                    1. Objections &amp; Hurdles
+                  </span>
+<span class="text-[10px] font-mono text-outline">2 Flagged</span>
+</div>
+<ul class="space-y-2 text-xs leading-relaxed text-on-surface">
+<li class="flex items-start gap-1.5">
+<span class="text-tertiary font-bold mt-0.5">•</span>
+<div>
+<strong class="text-on-surface font-medium">Data Isolation Compliance:</strong> Security lead requested VPC peering isolation proof before sign-off. Existing SOC2 packet does not detail sub-tenant caching limits.
+                    </div>
+</li>
+<li class="flex items-start gap-1.5">
+<span class="text-tertiary font-bold mt-0.5">•</span>
+<div>
+<strong class="text-on-surface font-medium">Payback Period Constraint:</strong> VP Finance strictly enforces under 6 months breakeven for Q4 software tooling.
+                    </div>
+</li>
+</ul>
+</div>
+<!-- Grid 2: Key Stakeholders & Sentiment -->
+<div class="bg-surface-container border border-outline-variant/70 rounded p-3 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-semibold text-primary uppercase flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">groups</span>
+                    2. Key Stakeholders &amp; Sentiment
+                  </span>
+<span class="text-[10px] font-mono text-outline">3 Evaluated</span>
+</div>
+<div class="space-y-1.5 text-xs">
+<div class="p-1.5 rounded bg-surface-container-low flex items-center justify-between">
+<div>
+<span class="font-medium text-on-surface">Dan Miller</span>
+<span class="text-outline text-[11px]"> · CTO</span>
+</div>
+<span class="px-1.5 py-0.2 rounded font-mono text-[10px] bg-secondary/15 text-secondary border border-secondary/20">Champion · Bullish</span>
+</div>
+<div class="p-1.5 rounded bg-surface-container-low flex items-center justify-between">
+<div>
+<span class="font-medium text-on-surface">Rachel Wu</span>
+<span class="text-outline text-[11px]"> · VP InfoSec</span>
+</div>
+<span class="px-1.5 py-0.2 rounded font-mono text-[10px] bg-error/15 text-error border border-error/20">Blocker · Skeptical</span>
+</div>
+<div class="p-1.5 rounded bg-surface-container-low flex items-center justify-between">
+<div>
+<span class="font-medium text-on-surface">Alex Chen</span>
+<span class="text-outline text-[11px]"> · Staff Architect</span>
+</div>
+<span class="px-1.5 py-0.2 rounded font-mono text-[10px] bg-surface-container-highest text-on-surface-variant">Neutral · Tech Fit</span>
+</div>
+</div>
+</div>
+<!-- Grid 3: Competitor Mentions & FUD -->
+<div class="bg-surface-container border border-outline-variant/70 rounded p-3 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-semibold text-on-surface uppercase flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-outline">shield</span>
+                    3. Competitor Mentions &amp; FUD
+                  </span>
+<span class="text-[10px] font-mono text-outline">Detected from Gong</span>
+</div>
+<div class="space-y-1.5 text-xs text-on-surface-variant leading-relaxed">
+<div class="border-l-2 border-outline pl-2 py-0.5">
+<span class="font-mono text-[11px] text-on-surface font-semibold">Datadog (Incumbent):</span>
+<p class="text-xs text-on-surface-variant mt-0.5">Currently contracted through March 2025. Dan indicated their ingestion bill spiked 44% last quarter, creating urgency for alternative metrics storage.</p>
+</div>
+<div class="border-l-2 border-outline pl-2 py-0.5">
+<span class="font-mono text-[11px] text-on-surface font-semibold">Honeycomb:</span>
+<p class="text-xs text-on-surface-variant mt-0.5">Alex Chen brought up high-cardinality profiling, but agreed Honeycomb lacks automated query latency regression analysis.</p>
+</div>
+</div>
+</div>
+<!-- Grid 4: Suggested Next Move -->
+<div class="bg-surface-container border border-primary/30 rounded p-3 flex flex-col justify-between gap-2.5">
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-mono text-[11px] font-semibold text-primary uppercase flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-primary">psychology</span>
+                      4. Suggested Next Move
+                    </span>
+<span class="text-[10px] font-mono px-1.5 py-0.2 bg-primary/20 text-primary rounded font-bold">HIGH PRIORITY</span>
+</div>
+<p class="text-xs text-on-surface leading-relaxed">
+                    Trigger a security-focused executive briefing with VP InfoSec <strong class="text-primary font-medium">Rachel Wu</strong>. Send the benchmark packet on AWS Transit Gateway latency tests and include the enterprise tenant data isolation annex.
+                  </p>
+</div>
+<!-- Suggested Micro Actions -->
+<div class="flex items-center gap-2 pt-1">
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary-container hover:bg-primary-container/80 text-xs font-mono font-medium transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">send</span>
+<span>Send AWS latency benchmark</span>
+</button>
+<button class="px-2.5 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-mono transition-colors border border-outline-variant">
+<span>Draft Executive ROI Sheet</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- ================= SECTION 3: CROSS-DEAL INTELLIGENCE PATTERN ================= -->
+<section class="bg-gradient-to-r from-surface-container-low via-surface-container-low to-surface-container border border-primary/30 rounded-md p-4 flex flex-col gap-3 relative overflow-hidden">
+<!-- Subtle glow accent bar on top -->
+<div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-transparent"></div>
+<div class="flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-mono text-xs font-semibold text-secondary uppercase tracking-wider">
+                  Cross-Deal Intelligence Pattern
+                </span>
+<span class="text-outline text-xs">·</span>
+<span class="font-mono text-[11px] text-on-surface-variant">Pattern match confidence: <strong class="text-on-surface">91%</strong></span>
+</div>
+<div class="font-mono text-[11px] text-outline">
+                Corpus: 420 Closed-Won Enterprise Accounts
+              </div>
+</div>
+<!-- Pattern Content Callout -->
+<div class="bg-surface-container-lowest/80 border border-outline-variant rounded p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div class="flex-1 space-y-1">
+<div class="font-medium text-xs text-on-surface flex items-center gap-2">
+<span>Similar friction observed in 3 recently closed-won enterprise deals:</span>
+<span class="font-mono text-[11px] text-primary underline cursor-pointer">FinTech Corp, MedGlobal &amp; BioSynth</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                  Accounts with over 2,000 engineers facing InfoSec data isolation blockers closed <strong class="text-secondary font-mono font-medium">14 days faster</strong> when the standard MSA included the <code class="font-mono text-[11px] bg-surface-container px-1 py-0.5 rounded text-primary">SOC2 Section 4.3 custom rider</code> rather than arguing standard tenant partitioning.
+                </p>
+</div>
+<!-- Callout Action Button -->
+<div class="shrink-0 flex items-center gap-2">
+<button class="px-3 py-1.5 rounded bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-mono flex items-center gap-1.5 transition-colors border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-primary">attachment</span>
+<span>Attach Section 4.3 Rider to draft</span>
+</button>
+</div>
+</div>
+<!-- Secondary reference pills -->
+<div class="flex items-center justify-between text-[11px] font-mono text-outline pt-0.5">
+<div class="flex items-center gap-3">
+<span>Referenced precedents: <span class="text-on-surface">Deal #1042 (BioSynth)</span>, <span class="text-on-surface">Deal #982 (MedGlobal)</span></span>
+</div>
+<a class="text-primary hover:underline flex items-center gap-0.5" href="#">
+<span>View full analysis telemetry</span>
+<span class="material-symbols-outlined text-[13px]">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+</main>
+</div>
+</div>
+</body></html>

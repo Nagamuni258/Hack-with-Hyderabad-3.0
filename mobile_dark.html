@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-tint": "#c3c0ff", "primary": "#c3c0ff", "secondary-fixed-dim": "#4edea3", "on-tertiary": "#571f00", "on-error-container": "#ffdad6", "surface-container-high": "#292a2d", "error-container": "#93000a", "on-secondary-container": "#00311f", "surface-container-highest": "#343538", "on-primary-container": "#dad7ff", "on-secondary-fixed": "#002113", "on-error": "#690005", "primary-fixed": "#e2dfff", "on-surface": "#e3e2e6", "secondary-fixed": "#6ffbbe", "on-tertiary-fixed-variant": "#7b2f00", "surface-container-low": "#1b1b1f", "primary-fixed-dim": "#c3c0ff", "inverse-primary": "#4d44e3", "on-secondary": "#003824", "on-primary-fixed-variant": "#3323cc", "background": "#121316", "surface": "#121316", "tertiary-fixed-dim": "#ffb695", "secondary": "#4edea3", "error": "#ffb4ab", "secondary-container": "#00a572", "inverse-surface": "#e3e2e6", "on-background": "#e3e2e6", "surface-bright": "#38393c", "tertiary-fixed": "#ffdbcc", "on-primary-fixed": "#0f0069", "outline": "#918fa1", "on-secondary-fixed-variant": "#005236", "on-primary": "#1d00a5", "on-tertiary-fixed": "#351000", "surface-dim": "#121316", "inverse-on-surface": "#303034", "surface-container-lowest": "#0d0e11", "primary-container": "#4f46e5", "surface-container": "#1f1f23", "on-tertiary-container": "#ffd2be", "on-surface-variant": "#c7c4d8", "outline-variant": "#464555", "surface-variant": "#343538", "tertiary-container": "#a44100", "tertiary": "#ffb695" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, spacing: { "margin": "1rem", "gutter": "0.75rem", "space-lg": "0.75rem", "space-xl": "1rem", "space-md": "0.5rem", "space-xs": "0.25rem", "space-sm": "0.375rem" }, fontFamily: { "body-md": ["Geist", "sans-serif"], "body-sm": ["Geist", "sans-serif"], "label-sm": ["JetBrains Mono", "monospace"], "headline-sm": ["Geist", "sans-serif"], "headline-lg": ["Geist", "sans-serif"], "label-xs": ["JetBrains Mono", "monospace"], "headline-md": ["Geist", "sans-serif"], "body-lg": ["Geist", "sans-serif"], "label-md": ["JetBrains Mono", "monospace"] }, fontSize: { "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.01em", "fontWeight": "400" }], "headline-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-xs": ["10px", { "lineHeight": "12px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "-0.01em", "fontWeight": "500" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;background-color:#121316;color:#e3e2e6;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-14 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><div class="w-2 h-2 rounded-full bg-secondary shrink-0"></div><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate">Deal Workspace</span><div class="hidden sm:flex items-center px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-xs text-label-xs uppercase tracking-wider shrink-0">Acme Corp Sales</div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Command Switcher" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded bg-surface-container-low transition-colors"><span class="material-symbols-outlined text-[18px]">terminal</span></button><button aria-label="Filter Deals" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded bg-surface-container-low transition-colors"><span class="material-symbols-outlined text-[18px]">filter_list</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-14 pb-20 bg-surface min-h-screen"><div class="flex flex-col w-full text-on-surface">
+<!-- Top Command Matrix Bar / Filter Status -->
+<div class="w-full bg-surface-container-lowest px-gutter py-space-sm flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="font-label-xs text-label-xs text-outline uppercase tracking-wider">Active Workspace</span>
+<span class="text-outline-variant font-label-xs">/</span>
+<span class="font-label-xs text-label-xs text-primary font-medium truncate">Enterprise Tier 1 ($500k ARR Pipeline)</span>
+</div>
+<div class="flex items-center gap-space-xs shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-xs text-label-xs text-outline font-mono">LIVE_SYNC</span>
+</div>
+</div>
+<!-- Section 1: Deal Selector / Sidebar Stream (Horizontal Dense Tabular Rail) -->
+<div class="w-full bg-surface-container-low px-gutter py-space-sm">
+<div class="flex items-center justify-between pb-space-xs">
+<span class="font-label-xs text-label-xs text-outline uppercase tracking-wider">Key Active Deals (4)</span>
+<span class="font-label-xs text-label-xs text-outline-variant font-mono">SORT: ARR_DESC</span>
+</div>
+<!-- Scrollable Dense Row List -->
+<div class="flex flex-col gap-1 w-full" id="deal-selector-container">
+<!-- Vanguard Health (Active Highlighted) -->
+<div class="deal-row w-full bg-surface-container-high px-space-md py-space-xs flex items-center justify-between gap-space-sm cursor-pointer select-none transition-colors" data-deal="vanguard">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-1 h-7 bg-primary rounded shrink-0"></div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate">Vanguard Health</span>
+<span class="font-label-xs text-label-xs px-1.5 py-0.5 bg-surface-container text-primary rounded font-mono">SEC REVIEW</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Sarah Jenkins • Enterprise Bio</span>
+</div>
+</div>
+<div class="text-right shrink-0">
+<div class="font-label-sm text-label-sm text-on-surface font-mono font-medium">$140,000</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">ARR</div>
+</div>
+</div>
+<!-- Apex Cloud Systems -->
+<div class="deal-row w-full bg-surface-container px-space-md py-space-xs flex items-center justify-between gap-space-sm cursor-pointer select-none transition-colors hover:bg-surface-container-high" data-deal="apex">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-1 h-7 bg-transparent rounded shrink-0"></div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Apex Cloud Systems</span>
+<span class="font-label-xs text-label-xs px-1.5 py-0.5 bg-surface-container-low text-on-surface-variant rounded font-mono">COMMERCIALS</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Marcus Vance • Infra</span>
+</div>
+</div>
+<div class="text-right shrink-0">
+<div class="font-label-sm text-label-sm text-on-surface font-mono font-medium">$85,000</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">ARR</div>
+</div>
+</div>
+<!-- Kestrel Security -->
+<div class="deal-row w-full bg-surface-container px-space-md py-space-xs flex items-center justify-between gap-space-sm cursor-pointer select-none transition-colors hover:bg-surface-container-high" data-deal="kestrel">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-1 h-7 bg-transparent rounded shrink-0"></div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Kestrel Security</span>
+<span class="font-label-xs text-label-xs px-1.5 py-0.5 bg-surface-container-low text-on-surface-variant rounded font-mono">LEGAL</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Elena Rostova • Cyber Ops</span>
+</div>
+</div>
+<div class="text-right shrink-0">
+<div class="font-label-sm text-label-sm text-on-surface font-mono font-medium">$210,000</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">ARR</div>
+</div>
+</div>
+<!-- Palantir Systems -->
+<div class="deal-row w-full bg-surface-container px-space-md py-space-xs flex items-center justify-between gap-space-sm cursor-pointer select-none transition-colors hover:bg-surface-container-high" data-deal="palantir">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-1 h-7 bg-transparent rounded shrink-0"></div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Palantir Systems</span>
+<span class="font-label-xs text-label-xs px-1.5 py-0.5 bg-surface-container-low text-on-surface-variant rounded font-mono">DISCOVERY</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Sarah Jenkins • Data Gov</span>
+</div>
+</div>
+<div class="text-right shrink-0">
+<div class="font-label-sm text-label-sm text-on-surface font-mono font-medium">$65,000</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">ARR</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Panel Content Stack -->
+<div class="w-full flex flex-col p-gutter gap-space-md">
+<!-- Active Deal Identity Card -->
+<div class="w-full bg-surface-container-low p-space-sm flex items-center justify-between gap-space-sm rounded">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-7 h-7 rounded bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold truncate" id="active-deal-title">Vanguard Health</span>
+<span class="font-label-xs text-label-xs px-1.5 py-0.2 rounded bg-primary-container text-on-primary-container font-mono">TIER-1</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Owner: Sarah Jenkins • Quarter Target: Q4</span>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="font-label-md text-label-md text-secondary font-mono font-semibold">$140,000 ARR</span>
+<span class="font-label-xs text-label-xs text-outline font-mono">STAGE: SEC_REVIEW</span>
+</div>
+</div>
+<!-- Section 2: Log an Interaction -->
+<div class="w-full bg-surface-container-low p-space-md rounded flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-outline text-[16px]">edit_note</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Log interaction</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-xs text-label-xs text-outline-variant font-mono">[⌘ Enter to save]</span>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim shrink-0"></div>
+<span class="font-label-xs text-label-xs text-outline font-mono" id="sync-status">Synced 2m ago</span>
+</div>
+</div>
+<!-- Compact Utilitarian Textarea -->
+<div class="relative w-full">
+<textarea class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline-variant p-space-sm rounded outline-none focus:bg-surface-container-lowest transition-colors resize-none" id="interaction-input" placeholder="Enter call summary, stakeholder shift, or buyer feedback..." rows="3"></textarea>
+</div>
+<!-- Controls & Metadata Selector -->
+<div class="flex items-center justify-between gap-space-sm pt-space-xs">
+<!-- Metadata Pill Selector -->
+<div class="flex items-center gap-1 overflow-x-auto" id="pill-selector">
+<button class="pill-btn font-label-xs text-label-xs px-space-sm py-1 rounded bg-surface-container-highest text-on-surface font-mono flex items-center gap-1 transition-colors" data-tag="call" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+            Call
+          </button>
+<button class="pill-btn font-label-xs text-label-xs px-space-sm py-1 rounded bg-surface-container text-outline font-mono flex items-center gap-1 transition-colors hover:text-on-surface" data-tag="email" type="button">
+            Email
+          </button>
+<button class="pill-btn font-label-xs text-label-xs px-space-sm py-1 rounded bg-surface-container text-outline font-mono flex items-center gap-1 transition-colors hover:text-on-surface" data-tag="sync" type="button">
+            Security sync
+          </button>
+</div>
+<!-- Flat Crisp Action Button -->
+<button class="shrink-0 font-label-xs text-label-xs font-mono uppercase tracking-wider px-space-md py-1.5 rounded bg-surface-container-high hover:bg-surface-container-highest text-on-surface transition-colors flex items-center gap-1 active:bg-surface-container-lowest" id="save-interaction-btn" type="button">
+<span class="material-symbols-outlined text-[14px]">save</span>
+<span>Save entry</span>
+</button>
+</div>
+</div>
+<!-- Section 3: Deal Briefing (Dense 2x2 Structured Grid) -->
+<div class="w-full bg-surface-container-low p-space-md rounded flex flex-col gap-space-sm">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-outline text-[16px]">summarize</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Deal Briefing</span>
+</div>
+<span class="font-label-xs text-label-xs text-outline font-mono">CONFIDENCE: 84%</span>
+</div>
+<!-- 2x2 Structured Field Cells -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-xs w-full">
+<!-- Field 1: Objections -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col gap-1">
+<span class="font-label-xs text-label-xs text-outline font-mono uppercase tracking-wider">Objections</span>
+<p class="font-body-md text-body-md text-on-surface leading-snug">
+            SOC 2 Type II vendor data residency requirements; procurement asking for 15% multi-year discount.
+          </p>
+</div>
+<!-- Field 2: Stakeholders -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col gap-1">
+<span class="font-label-xs text-label-xs text-outline font-mono uppercase tracking-wider">Stakeholders</span>
+<div class="flex flex-col gap-1 font-body-md text-body-md text-on-surface">
+<div><span class="text-secondary font-mono font-medium">David Chen</span> (VP Eng - Champion)</div>
+<div><span class="text-tertiary font-mono font-medium">Priya Nair</span> (CSO - Blocker)</div>
+<div><span class="text-on-surface-variant font-mono">Tom Sterling</span> (Procurement)</div>
+</div>
+</div>
+<!-- Field 3: Competitors -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col gap-1">
+<span class="font-label-xs text-label-xs text-outline font-mono uppercase tracking-wider">Competitors</span>
+<p class="font-body-md text-body-md text-on-surface leading-snug">
+<span class="text-primary font-mono">Wiz</span> (eliminated in POC), <span class="text-outline-variant font-mono">Prisma Cloud</span> (legacy incumbent).
+          </p>
+</div>
+<!-- Field 4: Suggested Next Move -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs text-primary font-mono uppercase tracking-wider">Suggested Next Move</span>
+<span class="font-label-xs text-label-xs text-secondary font-mono">CRITICAL</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-snug">
+            Trigger executive sponsor email from VP Sales to CSO regarding EU data residency addendum before Thursday pricing call.
+          </p>
+</div>
+</div>
+</div>
+<!-- Section 4: Cross-Deal Pattern Restrained Callout Container -->
+<div class="w-full bg-surface-container-low p-space-md rounded flex flex-col gap-space-sm">
+<!-- Quiet Header Badge -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-2 h-2 rounded-full bg-primary shrink-0"></div>
+<span class="font-label-xs text-label-xs text-primary font-mono uppercase tracking-wider">Cross-Deal Intelligence (3 similar accounts)</span>
+</div>
+<span class="font-label-xs text-label-xs text-outline font-mono">MATCH_SCORE: 96%</span>
+</div>
+<!-- Core Intelligence Snippet with 15% Accent Tint Background -->
+<div class="bg-primary/10 p-space-sm rounded flex flex-col gap-space-xs">
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+<span class="text-primary font-medium">CSO Priya Nair</span> previously blocked Sentinel AI on audit log export limits in Q3. Enterprise accounts in healthcare with &gt;5,000 seats closed <span class="text-secondary font-mono font-medium">32% faster</span> when including custom audit retention in the initial MSA draft.
+        </p>
+</div>
+<!-- Subtle Utility Action Link -->
+<div class="flex items-center justify-between pt-space-xs">
+<button class="group flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px] text-outline group-hover:text-primary transition-colors">link</span>
+<span>View referenced deal (Sentinel AI)</span>
+<span class="material-symbols-outlined text-[14px] transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+</button>
+<span class="font-label-xs text-label-xs text-outline-variant font-mono">Q3_HISTORICAL</span>
+</div>
+</div>
+<!-- Telemetry & Activity Footer Matrix -->
+<div class="w-full bg-surface-container-lowest p-space-sm rounded flex items-center justify-between text-outline font-label-xs text-label-xs font-mono">
+<div class="flex items-center gap-space-md">
+<span>MEM: 18.4MB</span>
+<span>LATENCY: 42ms</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span>SECURITY_LEVEL: RESTRICTED</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initDealIntelligence() {
+    const deals = {
+      vanguard: {
+        title: 'Vanguard Health',
+        owner: 'Sarah Jenkins • Enterprise Bio',
+        arr: '$140,000',
+        stage: 'SEC_REVIEW',
+        objections: 'SOC 2 Type II vendor data residency requirements; procurement asking for 15% multi-year discount.',
+        stakeholders: 'David Chen (VP Eng - Champion), Priya Nair (Chief Security Officer - Blocker), Tom Sterling (Procurement)',
+        competitors: 'Wiz (eliminated in POC), Prisma Cloud (legacy incumbent)',
+        move: 'Trigger executive sponsor email from VP Sales to CSO regarding EU data residency addendum before Thursday pricing call.'
+      },
+      apex: {
+        title: 'Apex Cloud Systems',
+        owner: 'Marcus Vance • Infra',
+        arr: '$85,000',
+        stage: 'COMMERCIALS',
+        objections: 'Contractual liability caps under standard terms; indemnity request on third-party connectors.',
+        stakeholders: 'Liam Cooper (Head of Infra - Champion), Rachel Green (General Counsel)',
+        competitors: 'Datadog (pricing pressure), Custom In-house',
+        move: 'Submit redline with mutual $5M cap and schedule joint counsel sync before COB Friday.'
+      },
+      kestrel: {
+        title: 'Kestrel Security',
+        owner: 'Elena Rostova • Cyber Ops',
+        arr: '$210,000',
+        stage: 'LEGAL',
+        objections: 'SLA guarantee for 99.99% availability with financial penalties for tier-1 outages.',
+        stakeholders: 'Alex Mercer (CTO - Sponsor), Danica Vance (Procurement Lead)',
+        competitors: 'CrowdStrike Falcon (already licensed), Splunk',
+        move: 'Counter with 99.95% standard plus priority support desk escalation SLA tier.'
+      },
+      palantir: {
+        title: 'Palantir Systems',
+        owner: 'Sarah Jenkins • Data Gov',
+        arr: '$65,000',
+        stage: 'DISCOVERY',
+        objections: 'Evaluating whether to build internal ingestion layer or integrate plug-and-play adapter.',
+        stakeholders: 'Dr. Jason Miller (Principal Architect)',
+        competitors: 'Internal tooling',
+        move: 'Deliver 14-day zero-friction sandbox proof with synthetic telemetry data set.'
+      }
+    };
+
+    // Deal Selector Row clicks
+    const rows = document.querySelectorAll('.deal-row');
+    const activeTitle = document.getElementById('active-deal-title');
+
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        rows.forEach(r => {
+          r.classList.remove('bg-surface-container-high');
+          r.classList.add('bg-surface-container');
+          const bar = r.querySelector('.rounded.shrink-0');
+          if (bar) bar.classList.replace('bg-primary', 'bg-transparent');
+        });
+
+        row.classList.add('bg-surface-container-high');
+        row.classList.remove('bg-surface-container');
+        const activeBar = row.querySelector('.rounded.shrink-0');
+        if (activeBar) activeBar.classList.replace('bg-transparent', 'bg-primary');
+
+        const dealKey = row.getAttribute('data-deal');
+        if (deals[dealKey] && activeTitle) {
+          activeTitle.textContent = deals[dealKey].title;
+        }
+      });
+    });
+
+    // Pill Selector toggle
+    const pills = document.querySelectorAll('.pill-btn');
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => {
+          p.classList.remove('bg-surface-container-highest', 'text-on-surface');
+          p.classList.add('bg-surface-container', 'text-outline');
+          const dot = p.querySelector('.rounded-full');
+          if (dot) dot.remove();
+        });
+        pill.classList.remove('bg-surface-container', 'text-outline');
+        pill.classList.add('bg-surface-container-highest', 'text-on-surface');
+        
+        const dot = document.createElement('span');
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-primary shrink-0';
+        pill.prepend(dot);
+      });
+    });
+
+    // Save interaction trigger
+    const saveBtn = document.getElementById('save-interaction-btn');
+    const input = document.getElementById('interaction-input');
+    const syncStatus = document.getElementById('sync-status');
+
+    function triggerSave() {
+      if (!input.value.trim()) return;
+      const originalText = saveBtn.innerHTML;
+      saveBtn.innerHTML = '<span class="material-symbols-outlined text-[14px] animate-spin">sync</span><span>Saving...</span>';
+      setTimeout(() => {
+        input.value = '';
+        saveBtn.innerHTML = '<span class="material-symbols-outlined text-[14px] text-secondary">check</span><span>Saved</span>';
+        if (syncStatus) syncStatus.textContent = 'Synced just now';
+        setTimeout(() => {
+          saveBtn.innerHTML = originalText;
+        }, 1400);
+      }, 400);
+    }
+
+    if (saveBtn) saveBtn.addEventListener('click', triggerSave);
+    if (input) {
+      input.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+          e.preventDefault();
+          triggerSave();
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-1px_8px_rgba(0,0,0,0.5)]" data-active-classes="text-primary bg-surface-container-high"><div class="grid grid-cols-4 items-center h-14 px-margin gap-space-xs"><a class="flex flex-col items-center justify-center h-11 rounded text-on-surface-variant hover:text-on-surface transition-colors" data-path="pipeline-matrix" href="#"><span class="material-symbols-outlined text-[18px]">view_kanban</span><span class="font-label-xs text-label-xs mt-0.5 tracking-tight uppercase">Pipeline</span></a><a aria-current="page" class="flex flex-col items-center justify-center h-11 rounded transition-colors text-primary bg-surface-container-high" data-path="deal-workspace" href="#"><span class="material-symbols-outlined text-[18px]">table_chart</span><span class="font-label-xs text-label-xs mt-0.5 tracking-tight uppercase">Workspace</span></a><a class="flex flex-col items-center justify-center h-11 rounded text-on-surface-variant hover:text-on-surface transition-colors" data-path="revenue-signals" href="#"><span class="material-symbols-outlined text-[18px]">monitoring</span><span class="font-label-xs text-label-xs mt-0.5 tracking-tight uppercase">Signals</span></a><a class="flex flex-col items-center justify-center h-11 rounded text-on-surface-variant hover:text-on-surface transition-colors" data-path="rep-directory" href="#"><span class="material-symbols-outlined text-[18px]">account_tree</span><span class="font-label-xs text-label-xs mt-0.5 tracking-tight uppercase">Accounts</span></a></div></nav></body></html>
