@@ -1,5 +1,13 @@
 import os
 import sys
+
+# Ensure UTF-8 output on Windows consoles
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env
@@ -10,7 +18,7 @@ HINDSIGHT_API_KEY = os.getenv("HINDSIGHT_API_KEY") or os.getenv("HSK_API_KEY")
 
 def verify_setup():
     print("=" * 55)
-    print(" 🚀 Deal Intel Agent - Initialization Check")
+    print(" [>] Deal Intel Agent - Initialization Check")
     print("=" * 55)
     
     if not GROQ_API_KEY:
@@ -51,7 +59,7 @@ def run_agent_quickstart():
     Key Risks: Regulatory licensing in EU & APAC, banking partner dependency.
     """
 
-    print("Analyzing deal sample with Groq LLM (llama-3.3-70b-versatile)...\n")
+    print("Analyzing deal sample with Groq LLM (openai/gpt-oss-120b)...\n")
     try:
         chat_completion = client.chat.completions.create(
             messages=[
@@ -67,7 +75,7 @@ def run_agent_quickstart():
                     "content": f"Analyze this deal and give a 3-bullet summary with recommendation:\n\n{sample_deal_memo}",
                 },
             ],
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             temperature=0.3,
         )
         print("--- Deal Analysis Response ---")
