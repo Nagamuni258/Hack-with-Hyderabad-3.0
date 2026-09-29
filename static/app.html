@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <title>Deal Intelligence · Mobile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --p:   #4338ca; --pc: #4f46e5; --opc: #eef2ff;
+      --s:   #059669; --t:  #d97706; --e:  #dc2626;
+      --bg:  #ffffff; --sf: #ffffff;
+      --scl: #ffffff; --sclo: #f9fafb; --sc: #f3f4f6; --sch: #e5e7eb; --schh: #d1d5db;
+      --os:  #111827; --osv: #4b5563; --ol: #9ca3af; --ov: #e5e7eb;
+      --body-bg: #f9fafb;
+    }
+    html.dark {
+      --p:   #c3c0ff; --pc: #4f46e5; --opc: #dad7ff;
+      --s:   #4edea3; --t:  #ffb695; --e:  #ffb4ab;
+      --bg:  #121316; --sf: #121316;
+      --scl: #0d0e11; --sclo: #17181c; --sc: #1d1e22; --sch: #26272c; --schh: #303238;
+      --os:  #e3e2e6; --osv: #9d9bb0; --ol: #464555; --ov: #2f3037;
+      --body-bg: #121316;
+    }
+    *,*::before,*::after{box-sizing:border-box;transition:background-color .18s,border-color .18s,color .12s;}
+    html,body{margin:0;padding:0;width:100vw;}
+    body{
+      background:var(--body-bg);color:var(--os);
+      font-family:'Geist',sans-serif;font-size:13px;line-height:1.4;
+      overscroll-behavior:none;min-height:max(812px,100dvh);
+    }
+    ::-webkit-scrollbar{display:none;}
+    .ms{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:18px;line-height:1;display:inline-block;white-space:nowrap;direction:ltr;}
+    .mono{font-family:'JetBrains Mono',monospace;}
+    .pill{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:500;border:1px solid var(--ov);}
+    .badge{padding:1px 7px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600;border:1px solid transparent;}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;font-size:13px;border:1px solid transparent;cursor:pointer;font-family:'Geist',sans-serif;font-weight:500;transition:opacity .15s,background .15s;}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+    .btn-primary{background:var(--p);color:#fff;border-color:var(--p);}
+    html.dark .btn-primary{color:var(--scl);}
+    .btn-ghost{background:transparent;color:var(--osv);border:1px solid var(--ov);}
+    .btn-ghost:hover{background:var(--sc);color:var(--os);}
+    .btn-surface{background:var(--sch);color:var(--os);border:1px solid var(--ov);}
+    .icon-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;border:none;background:var(--sc);color:var(--osv);transition:background .15s,color .15s;}
+    .icon-btn:hover{background:var(--sch);color:var(--os);}
+    input,textarea{background:var(--sc);color:var(--os);border:1px solid var(--ov);border-radius:8px;outline:none;font-family:'Geist',sans-serif;width:100%;}
+    input:focus,textarea:focus{border-color:var(--p);}
+    .card{background:var(--sclo);border:1px solid var(--ov);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;}
+    .gcell{background:var(--sc);border:1px solid var(--ov);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:5px;}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ol);font-weight:600;}
+    .spin{animation:spin .9s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* Bottom nav safe area */
+    .pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}
+    .pt-safe{padding-top:env(safe-area-inset-top,0px);}
+    /* Panel overlay */
+    .drawer{position:fixed;inset:0;z-index:400;display:none;}
+    .drawer.open{display:block;}
+    .drawer-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);}
+    .drawer-content{position:absolute;bottom:0;left:0;right:0;background:var(--sclo);border-radius:16px 16px 0 0;padding:16px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);max-height:80vh;overflow-y:auto;}
+    .deal-active-bar{border-left:3px solid var(--p);}
+    .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--p);border-radius:50%;border:2px solid var(--scl);}
+  </style>
+</head>
+<body class="flex flex-col min-h-screen" style="background:var(--body-bg);">
+
+<!-- ── FIXED HEADER ── -->
+<header style="position:fixed;top:0;width:100%;z-index:100;background:var(--sf);border-bottom:1px solid var(--ov);backdrop-filter:blur(16px);" class="pt-safe">
+  <div style="height:56px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+    <!-- Brand -->
+    <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--s);flex-shrink:0;"></div>
+      <span class="mono" style="font-size:14px;font-weight:600;color:var(--os);white-space:nowrap;">Deal Intelligence</span>
+      <span class="badge" style="background:var(--sc);color:var(--osv);border-color:var(--ov);display:none;" id="app-mode-badge">Mobile</span>
+    </div>
+    <!-- Right controls -->
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <!-- Search -->
+      <button class="icon-btn" onclick="openAppSearch()" title="Search"><span class="ms" style="font-size:18px;">search</span></button>
+      <!-- Notifications -->
+      <button class="icon-btn" onclick="openAppNotifications()" style="position:relative;" title="Notifications">
+        <span class="ms" style="font-size:18px;">notifications</span>
+        <span class="notif-dot" id="app-notif-dot"></span>
+      </button>
+      <!-- Theme toggle -->
+      <button class="icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <span class="ms" id="theme-icon" style="font-size:18px;">light_mode</span>
+      </button>
+      <!-- Profile -->
+      <button class="icon-btn" onclick="openAppProfile()" style="background:var(--pc);border:1px solid var(--p);" title="Profile">
+        <span id="app-avatar-text" style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;color:var(--opc);">SO</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN SCROLL BODY ── -->
+<main style="padding-top:56px;padding-bottom:80px;display:flex;flex-direction:column;min-height:100dvh;">
+
+  <!-- Status bar -->
+  <div style="background:var(--scl);padding:6px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--ov);">
+    <div style="display:flex;align-items:center;gap:6px;min-width:0;">
+      <span class="sec-label">Workspace</span>
+      <span style="color:var(--ov);">/</span>
+      <span id="app-workspace" class="mono" style="font-size:10px;color:var(--p);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Loading...</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+      <span id="app-sync-dot" style="width:6px;height:6px;border-radius:50%;background:var(--s);display:inline-block;"></span>
+      <span class="mono" style="font-size:10px;color:var(--ol);" id="app-sync-label">LIVE_SYNC</span>
+    </div>
+  </div>
+
+  <!-- Deal selector strip -->
+  <div style="background:var(--sclo);padding:10px 12px;border-bottom:1px solid var(--ov);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <span class="sec-label">Active Deals (<span id="app-deal-count">0</span>)</span>
+      <button class="btn-ghost btn" style="padding:2px 8px;font-size:10px;" onclick="openAddDealSheet()">
+        <span class="ms" style="font-size:13px;">add</span>Add Deal
+      </button>
+    </div>
+    <!-- Filter -->
+    <input id="app-deal-filter" oninput="appOnFilter(this.value)" placeholder="Filter deals..." style="padding:6px 12px;font-size:12px;margin-bottom:6px;" />
+    <div id="app-deal-list" style="display:flex;flex-direction:column;gap:3px;"></div>
+  </div>
+
+  <!-- Main stack -->
+  <div style="padding:12px 14px;display:flex;flex-direction:column;gap:12px;">
+
+    <!-- Active Deal Identity Card -->
+    <div class="card" style="background:var(--sc);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:8px;background:var(--sch);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+          <span class="ms" style="font-size:20px;color:var(--p);">verified_user</span>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span id="app-deal-title" style="font-size:16px;font-weight:700;color:var(--os);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Select a Deal</span>
+            <span id="app-deal-tier" class="badge" style="background:var(--pc);color:var(--opc);border-color:var(--p);flex-shrink:0;">T1</span>
+          </div>
+          <div id="app-deal-owner" style="font-size:12px;color:var(--osv);margin-top:1px;">Choose a deal above</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div id="app-deal-value" class="mono" style="font-size:14px;font-weight:700;color:var(--s);">$—</div>
+          <div id="app-deal-stage" class="mono" style="font-size:10px;color:var(--ol);">STAGE: —</div>
+        </div>
+      </div>
+      <!-- Quick action chips -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="getBriefingApp()">
+          <span class="ms" style="font-size:13px;">refresh</span>Refresh Briefing
+        </button>
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="getPatternsApp()">
+          <span class="ms" style="font-size:13px;">auto_awesome</span>Spot Patterns
+        </button>
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="copyDealLinkApp()">
+          <span class="ms" style="font-size:13px;">link</span>Copy Link
+        </button>
+      </div>
+    </div>
+
+    <!-- Log Interaction Card -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="ms" style="font-size:16px;color:var(--ol);">edit_note</span>
+          <span style="font-weight:600;font-size:14px;color:var(--os);">Log Interaction</span>
+        </div>
+        <span id="app-log-time" class="mono" style="font-size:10px;color:var(--ol);">Now</span>
+      </div>
+
+      <!-- Type selector -->
+      <div style="display:flex;gap:4px;overflow-x:auto;" id="app-type-tabs">
+        <button onclick="appSetType('Call')"  id="app-tab-Call"  class="pill" style="background:var(--schh);color:var(--os);border-color:var(--ov);cursor:pointer;padding:4px 12px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--p);display:inline-block;"></span>Call
+        </button>
+        <button onclick="appSetType('Email')" id="app-tab-Email" class="pill" style="color:var(--osv);cursor:pointer;padding:4px 12px;">Email</button>
+        <button onclick="appSetType('Demo')"  id="app-tab-Demo"  class="pill" style="color:var(--osv);cursor:pointer;padding:4px 12px;">Demo</button>
+        <button onclick="appSetType('Note')"  id="app-tab-Note"  class="pill" style="color:var(--osv);cursor:pointer;padding:4px 12px;">Note</button>
+      </div>
+
+      <textarea id="app-log-input" rows="3" placeholder="Enter call summary, stakeholder shift, objection, pricing feedback..." style="padding:10px;font-size:13px;resize:none;"></textarea>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:11px;color:var(--ol);">Rep: <span id="app-log-rep" style="color:var(--os);">—</span></span>
+          <span id="app-log-chip" class="pill" style="color:var(--osv);">@Stakeholder</span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-ghost" style="font-size:12px;padding:5px 10px;" onclick="appClearLog()">
+            <span class="ms" style="font-size:14px;">clear</span>
+          </button>
+          <button id="app-log-btn" onclick="appSubmitLog()" class="btn btn-primary" style="font-size:13px;">
+            <span class="ms" style="font-size:14px;">save</span>Save Entry
+          </button>
+        </div>
+      </div>
+
+      <!-- Auto-retain label -->
+      <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--ol);">
+        <span class="ms" style="font-size:13px;color:var(--p);">auto_awesome</span>
+        Auto-retained to Hindsight persistent memory
+      </div>
+    </div>
+
+    <!-- Deal Briefing Card -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="ms" style="font-size:16px;color:var(--ol);">summarize</span>
+          <span style="font-weight:600;font-size:14px;color:var(--os);">Deal Briefing</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span id="app-brief-status" class="mono" style="font-size:10px;color:var(--ol);">—</span>
+          <button class="icon-btn" style="width:28px;height:28px;" onclick="getBriefingApp()"><span class="ms" style="font-size:16px;">refresh</span></button>
+        </div>
+      </div>
+
+      <!-- 2x2 grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="gcell">
+          <div class="sec-label">Objections</div>
+          <p id="app-obj" style="font-size:12px;color:var(--os);line-height:1.5;margin:0;">Select a deal...</p>
+        </div>
+        <div class="gcell">
+          <div class="sec-label">Stakeholders</div>
+          <div id="app-st" style="font-size:12px;color:var(--os);line-height:1.5;">—</div>
+        </div>
+        <div class="gcell">
+          <div class="sec-label">Competitors</div>
+          <p id="app-comp" style="font-size:12px;color:var(--osv);line-height:1.5;margin:0;">—</p>
+        </div>
+        <div class="gcell" style="border-color:rgba(99,102,241,.3);">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="sec-label" style="color:var(--p);">Next Move</div>
+            <span class="mono" style="font-size:9px;color:var(--p);font-weight:700;">HIGH PRI</span>
+          </div>
+          <p id="app-next" style="font-size:12px;color:var(--os);line-height:1.5;margin:0;">—</p>
+        </div>
+      </div>
+
+      <!-- Raw transcript toggle -->
+      <details>
+        <summary style="font-size:11px;color:var(--ol);cursor:pointer;font-family:'JetBrains Mono',monospace;">Full LLM Transcript</summary>
+        <pre id="app-raw-brief" style="margin:8px 0 0;padding:10px;background:var(--sc);border-radius:6px;font-size:10px;white-space:pre-wrap;line-height:1.6;color:var(--os);overflow-x:auto;"></pre>
+      </details>
+    </div>
+
+    <!-- Cross-Deal Pattern Card -->
+    <div class="card" style="border-color:rgba(99,102,241,.3);position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--p),var(--s),transparent);"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--p);"></div>
+          <span class="mono" style="font-size:10px;color:var(--p);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Cross-Deal Intelligence</span>
+        </div>
+        <span id="app-pattern-conf" class="mono" style="font-size:10px;color:var(--ol);">MATCH_SCORE: —</span>
+      </div>
+
+      <div style="background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:8px;padding:10px;">
+        <div id="app-pattern-headline" style="font-size:13px;font-weight:600;color:var(--os);line-height:1.5;margin-bottom:4px;">Tap "Spot Patterns" to run cross-deal intelligence across all accounts in Hindsight memory.</div>
+        <div id="app-pattern-body" style="font-size:12px;color:var(--osv);line-height:1.6;"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span class="mono" style="font-size:10px;color:var(--ol);">Hindsight Global Bank</span>
+        <button id="app-pattern-btn" onclick="getPatternsApp()" class="btn btn-surface" style="font-size:12px;padding:6px 12px;">
+          <span class="ms" style="font-size:14px;">auto_awesome</span>Spot Patterns
+        </button>
+      </div>
+    </div>
+
+    <!-- Interaction History Card -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="ms" style="font-size:16px;color:var(--ol);">history</span>
+          <span style="font-weight:600;font-size:14px;color:var(--os);">Interaction History</span>
+        </div>
+        <button class="icon-btn" style="width:28px;height:28px;" onclick="appReloadHistory()"><span class="ms" style="font-size:16px;">refresh</span></button>
+      </div>
+      <div id="app-log-history" style="display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;">
+        <div style="color:var(--ol);font-size:12px;text-align:center;padding:16px 0;">Select a deal to view history</div>
+      </div>
+    </div>
+
+    <!-- Pipeline metrics footer -->
+    <div style="background:var(--scl);border:1px solid var(--ov);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;" class="mono" style="font-size:11px;color:var(--osv);">
+      <div style="display:flex;gap:16px;">
+        <span style="color:var(--osv);">Pipeline: <strong id="app-pipeline-total" style="color:var(--os);">$0</strong></span>
+        <span style="color:var(--osv);">Deals: <strong id="app-deal-total" style="color:var(--os);">0</strong></span>
+      </div>
+      <a href="/" style="font-size:11px;color:var(--p);font-family:'JetBrains Mono',monospace;text-decoration:none;display:flex;align-items:center;gap:3px;">
+        <span class="ms" style="font-size:13px;">desktop_windows</span>Desktop
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<!-- ── TOAST ── -->
+<div id="app-toast" style="position:fixed;bottom:88px;left:14px;right:14px;background:var(--schh);border:1px solid var(--ov);border-radius:10px;padding:10px 14px;z-index:9999;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--os);box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;pointer-events:none;">
+  <span id="app-toast-icon" class="ms" style="font-size:18px;color:var(--p);">check_circle</span>
+  <span id="app-toast-msg">Notification</span>
+</div>
+
+<!-- ── BOTTOM NAV ── -->
+<nav style="position:fixed;bottom:0;width:100%;z-index:100;background:var(--scl);border-top:1px solid var(--ov);backdrop-filter:blur(16px);" class="pb-safe">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);height:56px;">
+    <button onclick="scrollToSection('app-deal-list')" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--osv);" id="nav-pipeline">
+      <span class="ms" style="font-size:20px;">view_kanban</span>
+      <span style="font-size:9px;margin-top:2px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Pipeline</span>
+    </button>
+    <button onclick="scrollToSection('app-log-input')" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--p);" id="nav-workspace">
+      <span class="ms" style="font-size:20px;">table_chart</span>
+      <span style="font-size:9px;margin-top:2px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Workspace</span>
+    </button>
+    <button onclick="getPatternsApp()" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--osv);" id="nav-signals">
+      <span class="ms" style="font-size:20px;">monitoring</span>
+      <span style="font-size:9px;margin-top:2px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Signals</span>
+    </button>
+    <a href="/" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:var(--osv);" id="nav-desktop">
+      <span class="ms" style="font-size:20px;">desktop_windows</span>
+      <span style="font-size:9px;margin-top:2px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Desktop</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     DRAWERS / SHEETS
+════════════════════════════════════════════════════════════════════════ -->
+
+<!-- Search Sheet -->
+<div class="drawer" id="app-search-drawer">
+  <div class="drawer-backdrop" onclick="closeDrawer('app-search-drawer')"></div>
+  <div class="drawer-content">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <span class="ms" style="font-size:18px;color:var(--ol);">search</span>
+      <input id="app-search-input" oninput="appOnFilter(this.value)" placeholder="Search deals, rep names..." style="flex:1;padding:8px 12px;font-size:14px;"/>
+      <button onclick="closeDrawer('app-search-drawer')" style="background:none;border:none;cursor:pointer;color:var(--osv);"><span class="ms" style="font-size:20px;">close</span></button>
+    </div>
+    <div id="app-search-results" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</div>
+
+<!-- Profile Sheet -->
+<div class="drawer" id="app-profile-drawer">
+  <div class="drawer-backdrop" onclick="closeDrawer('app-profile-drawer')"></div>
+  <div class="drawer-content">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <span style="font-weight:700;font-size:16px;color:var(--os);">Your Profile</span>
+      <button onclick="closeDrawer('app-profile-drawer')" style="background:none;border:none;cursor:pointer;color:var(--osv);"><span class="ms" style="font-size:22px;">close</span></button>
+    </div>
+    <!-- Avatar + info -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="width:52px;height:52px;border-radius:12px;background:var(--pc);color:var(--opc);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;border:1px solid var(--p);" id="app-profile-avatar">SO</div>
+      <div>
+        <div id="app-profile-name" style="font-weight:700;font-size:15px;color:var(--os);">Sales Ops</div>
+        <div id="app-profile-email" style="font-size:12px;color:var(--osv);">salesops@company.com</div>
+        <div class="mono" style="font-size:10px;color:var(--ol);margin-top:2px;">Deal Intelligence · Administrator</div>
+      </div>
+    </div>
+    <!-- Edit fields -->
+    <div style="display:flex;flex-direction:column;gap:8px;background:var(--sc);padding:12px;border-radius:10px;margin-bottom:12px;">
+      <div class="sec-label" style="margin-bottom:2px;">Edit Profile</div>
+      <input id="app-profile-name-input" placeholder="Full name" style="padding:8px 12px;font-size:13px;" value="Sales Ops"/>
+      <input id="app-profile-email-input" placeholder="Email" style="padding:8px 12px;font-size:13px;" value="salesops@company.com"/>
+      <button class="btn btn-primary" style="align-self:flex-end;" onclick="saveAppProfile()">
+        <span class="ms" style="font-size:14px;">save</span>Save Changes
+      </button>
+    </div>
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+      <div style="background:var(--sc);border-radius:8px;padding:10px;text-align:center;">
+        <div class="mono" style="font-size:18px;font-weight:700;color:var(--p);" id="app-stat-deals">0</div>
+        <div style="font-size:10px;color:var(--ol);">Deals</div>
+      </div>
+      <div style="background:var(--sc);border-radius:8px;padding:10px;text-align:center;">
+        <div class="mono" style="font-size:18px;font-weight:700;color:var(--s);" id="app-stat-mem">0</div>
+        <div style="font-size:10px;color:var(--ol);">Memories</div>
+      </div>
+      <div style="background:var(--sc);border-radius:8px;padding:10px;text-align:center;">
+        <div class="mono" style="font-size:18px;font-weight:700;color:var(--t);" id="app-stat-logs">0</div>
+        <div style="font-size:10px;color:var(--ol);">Logs</div>
+      </div>
+    </div>
+    <!-- Actions -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button class="btn btn-ghost" onclick="toggleTheme(); closeDrawer('app-profile-drawer');" style="justify-content:center;">
+        <span class="ms" style="font-size:16px;" id="app-profile-theme-icon">light_mode</span>Toggle Theme
+      </button>
+      <a href="/" class="btn btn-ghost" style="justify-content:center;text-decoration:none;color:var(--osv);">
+        <span class="ms" style="font-size:16px;">desktop_windows</span>Desktop View
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications Sheet -->
+<div class="drawer" id="app-notif-drawer">
+  <div class="drawer-backdrop" onclick="closeDrawer('app-notif-drawer')"></div>
+  <div class="drawer-content">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <span style="font-weight:700;font-size:16px;color:var(--os);">Notifications</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="font-size:12px;padding:4px 10px;" onclick="appMarkAllRead()">Mark all read</button>
+        <button onclick="closeDrawer('app-notif-drawer')" style="background:none;border:none;cursor:pointer;color:var(--osv);"><span class="ms" style="font-size:22px;">close</span></button>
+      </div>
+    </div>
+    <div id="app-notif-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</div>
+
+<!-- Add Deal Sheet -->
+<div class="drawer" id="app-add-deal-drawer">
+  <div class="drawer-backdrop" onclick="closeDrawer('app-add-deal-drawer')"></div>
+  <div class="drawer-content">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <span style="font-weight:700;font-size:16px;color:var(--os);">Add New Deal</span>
+      <button onclick="closeDrawer('app-add-deal-drawer')" style="background:none;border:none;cursor:pointer;color:var(--osv);"><span class="ms" style="font-size:22px;">close</span></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <label class="sec-label">Deal ID *</label>
+          <input id="app-nd-id" placeholder="deal_005" style="padding:8px 10px;font-size:13px;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <label class="sec-label">Company *</label>
+          <input id="app-nd-company" placeholder="Acme Corp" style="padding:8px 10px;font-size:13px;" />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <label class="sec-label">Rep Name</label>
+          <input id="app-nd-rep" placeholder="Sarah Jenkins" style="padding:8px 10px;font-size:13px;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <label class="sec-label">Deal Value</label>
+          <input id="app-nd-value" placeholder="$120,000" style="padding:8px 10px;font-size:13px;" />
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <label class="sec-label">Initial Note</label>
+        <textarea id="app-nd-note" rows="2" placeholder="First contact summary..." style="padding:8px 10px;font-size:13px;resize:none;"></textarea>
+      </div>
+      <button class="btn btn-primary" style="justify-content:center;font-size:14px;" onclick="appAddNewDeal()">
+        <span class="ms" style="font-size:16px;">add_circle</span>Create Deal
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════════════ -->
+<script>
+"use strict";
+
+// ── State ────────────────────────────────────────────────────────────────
+let appAllDeals = [];
+let appCurrentDealId = null;
+let appActiveType = 'Call';
+let appNotifications = [
+  { id:1, read:false, icon:'auto_awesome', text:'Deal Intelligence Agent ready. Select a deal to load AI briefing.', time:'Just now' },
+  { id:2, read:false, icon:'memory',       text:'Hindsight memory bank connected. Persistent memory active.',              time:'1m ago'  },
+];
+
+// ── Theme ─────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const dark = document.documentElement.classList.toggle('dark');
+  document.getElementById('theme-icon').textContent = dark ? 'light_mode' : 'dark_mode';
+  const pi = document.getElementById('app-profile-theme-icon');
+  if (pi) pi.textContent = dark ? 'light_mode' : 'dark_mode';
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+(function initTheme() {
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.classList.toggle('dark', saved === 'dark');
+  const icon = document.getElementById('theme-icon');
+  if (icon) icon.textContent = saved === 'dark' ? 'light_mode' : 'dark_mode';
+})();
+
+// ── Restore profile ────────────────────────────────────────────────────────
+(function restoreProfile() {
+  const p = localStorage.getItem('profile');
+  if (!p) return;
+  try {
+    const { name, email, initials } = JSON.parse(p);
+    if (name)     document.getElementById('app-profile-name').textContent = name;
+    if (email)    document.getElementById('app-profile-email').textContent = email;
+    if (initials) {
+      document.getElementById('app-profile-avatar').textContent = initials;
+      document.getElementById('app-avatar-text').textContent    = initials;
+    }
+    if (name)  document.getElementById('app-profile-name-input').value  = name;
+    if (email) document.getElementById('app-profile-email-input').value = email;
+  } catch {}
+})();
+
+// ── Drawers ───────────────────────────────────────────────────────────────
+function openDrawer(id)  { document.getElementById(id).classList.add('open'); }
+function closeDrawer(id) { document.getElementById(id).classList.remove('open'); }
+
+function openAppSearch()        { openDrawer('app-search-drawer'); setTimeout(() => document.getElementById('app-search-input')?.focus(), 50); }
+function openAppProfile()       { updateAppProfileStats(); openDrawer('app-profile-drawer'); }
+function openAppNotifications() { renderAppNotifications(); openDrawer('app-notif-drawer'); }
+function openAddDealSheet()     { openDrawer('app-add-deal-drawer'); }
+
+// ── Scroll to section ──────────────────────────────────────────────────────
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Notifications ─────────────────────────────────────────────────────────
+function renderAppNotifications() {
+  const el = document.getElementById('app-notif-list');
+  if (!el) return;
+  if (!appNotifications.length) {
+    el.innerHTML = '<div style="color:var(--ol);text-align:center;padding:20px;font-size:13px;">All caught up!</div>';
+    return;
+  }
+  el.innerHTML = appNotifications.map(n => `
+    <div style="padding:10px;border-radius:8px;border:1px solid var(--ov);background:${n.read ? 'transparent' : 'var(--sc)'};display:flex;gap:10px;align-items:flex-start;">
+      <span class="ms" style="font-size:20px;color:var(--p);flex-shrink:0;">${n.icon}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;color:var(--os);line-height:1.5;">${n.text}</div>
+        <div class="mono" style="font-size:10px;color:var(--ol);margin-top:2px;">${n.time}</div>
+      </div>
+      <button onclick="appDismissNotif(${n.id})" style="background:none;border:none;cursor:pointer;color:var(--ol);padding:0;"><span class="ms" style="font-size:18px;">close</span></button>
+    </div>
+  `).join('');
+  const dot = document.getElementById('app-notif-dot');
+  if (dot) dot.style.display = appNotifications.some(n => !n.read) ? 'block' : 'none';
+}
+
+function appDismissNotif(id) {
+  appNotifications = appNotifications.filter(n => n.id !== id);
+  renderAppNotifications();
+}
+function appMarkAllRead() { appNotifications.forEach(n => n.read = true); renderAppNotifications(); }
+function appAddNotification(icon, text) {
+  appNotifications.unshift({ id: Date.now(), read: false, icon, text, time: 'Just now' });
+  renderAppNotifications();
+}
+
+// ── Profile ───────────────────────────────────────────────────────────────
+function saveAppProfile() {
+  const name  = document.getElementById('app-profile-name-input').value.trim() || 'Sales Ops';
+  const email = document.getElementById('app-profile-email-input').value.trim() || 'salesops@company.com';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+
+  document.getElementById('app-profile-name').textContent   = name;
+  document.getElementById('app-profile-email').textContent  = email;
+  document.getElementById('app-profile-avatar').textContent = initials;
+  document.getElementById('app-avatar-text').textContent    = initials;
+
+  localStorage.setItem('profile', JSON.stringify({ name, email, initials }));
+  appShowToast('Profile saved ✅');
+  closeDrawer('app-profile-drawer');
+}
+
+function updateAppProfileStats() {
+  const stats = {
+    deals: appAllDeals.length,
+    logs:  appAllDeals.reduce((s,d) => s + (d.log_entries?.length || 0), 0),
+  };
+  document.getElementById('app-stat-deals').textContent = stats.deals;
+  document.getElementById('app-stat-logs').textContent  = stats.logs;
+  document.getElementById('app-stat-mem').textContent   = stats.logs;
+}
+
+// ── Load Deals ────────────────────────────────────────────────────────────
+async function appLoadDeals() {
+  try {
+    const res = await fetch('/deals');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    appAllDeals = await res.json();
+    renderAppDealList(appAllDeals);
+    updateAppPipelineMetrics();
+    updateAppWorkspaceLabel();
+    if (appAllDeals.length > 0) appSelectDeal(appAllDeals[0].deal_id);
+  } catch (err) {
+    appShowToast('⚠️ Backend error — is FastAPI running?', true);
+    renderAppDealList([]);
+  }
+}
+
+function updateAppWorkspaceLabel() {
+  const total = appAllDeals.reduce((s,d) => s + parseFloat((d.deal_value||'0').replace(/[$,]/g,'')), 0);
+  const el = document.getElementById('app-workspace');
+  if (el) el.textContent = `Enterprise Pipeline ($${Math.round(total/1000)}k ARR)`;
+}
+
+function updateAppPipelineMetrics() {
+  const total = appAllDeals.reduce((s,d) => s + parseFloat((d.deal_value||'0').replace(/[$,]/g,'')), 0);
+  const el1 = document.getElementById('app-pipeline-total');
+  const el2 = document.getElementById('app-deal-total');
+  if (el1) el1.textContent = `$${(total/1000).toFixed(0)}k`;
+  if (el2) el2.textContent = appAllDeals.length;
+  document.getElementById('app-deal-count').textContent = appAllDeals.length;
+}
+
+function renderAppDealList(deals) {
+  const el = document.getElementById('app-deal-list');
+  if (!el) return;
+  if (!deals.length) {
+    el.innerHTML = '<div style="color:var(--ol);font-size:12px;text-align:center;padding:12px 0;">No deals found</div>';
+    return;
+  }
+  el.innerHTML = deals.map(d => {
+    const isActive = d.deal_id === appCurrentDealId;
+    const val = parseFloat((d.deal_value||'0').replace(/[$,]/g,''));
+    const riskColor = val > 200000 ? 'var(--s)' : val > 100000 ? 'var(--t)' : 'var(--e)';
+    return `
+    <div onclick="appSelectDeal('${d.deal_id}')" style="padding:10px 12px;border-radius:8px;border:1px solid var(--ov);background:${isActive ? 'var(--sch)' : 'var(--sc)'};border-left:3px solid ${isActive ? 'var(--p)' : 'var(--ov)'};display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:14px;font-weight:${isActive?'700':'500'};color:var(--os);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.company}</span>
+          <span class="pill" style="color:${riskColor};border-color:${riskColor}30;background:${riskColor}12;font-size:9px;flex-shrink:0;">Stage ${d.deal_id?.slice(-1)||'1'}</span>
+        </div>
+        <span style="font-size:11px;color:var(--osv);">${d.rep_name}</span>
+      </div>
+      <div class="mono" style="font-size:13px;font-weight:700;color:${isActive ? 'var(--s)' : 'var(--os)'};flex-shrink:0;">${d.deal_value||'$0'}</div>
+    </div>`;
+  }).join('');
+
+  // Also update search results if drawer is open
+  const sr = document.getElementById('app-search-results');
+  if (sr && document.getElementById('app-search-drawer').classList.contains('open')) {
+    sr.innerHTML = el.innerHTML;
+  }
+}
+
+function appOnFilter(q) {
+  const ql = q.toLowerCase().trim();
+  const filtered = ql
+    ? appAllDeals.filter(d => d.company.toLowerCase().includes(ql) || d.rep_name.toLowerCase().includes(ql) || d.deal_id.toLowerCase().includes(ql))
+    : appAllDeals;
+  renderAppDealList(filtered);
+  document.getElementById('app-deal-count').textContent = filtered.length;
+
+  // Sync search drawer
+  const sr = document.getElementById('app-search-results');
+  if (sr) sr.innerHTML = document.getElementById('app-deal-list').innerHTML;
+}
+
+// ── Select Deal ───────────────────────────────────────────────────────────
+async function appSelectDeal(dealId) {
+  appCurrentDealId = dealId;
+  closeDrawer('app-search-drawer');
+
+  // Fetch full detail
+  let deal = appAllDeals.find(d => d.deal_id === dealId);
+  try {
+    const res = await fetch(`/deals/${dealId}`);
+    if (res.ok) {
+      deal = await res.json();
+      // Update local
+      const idx = appAllDeals.findIndex(d => d.deal_id === dealId);
+      if (idx >= 0) appAllDeals[idx] = deal;
+    }
+  } catch {}
+
+  if (!deal) return;
+
+  document.getElementById('app-deal-title').textContent = deal.company;
+  document.getElementById('app-deal-value').textContent = deal.deal_value || '—';
+  document.getElementById('app-deal-owner').textContent = `${deal.rep_name} · ${deal.log_entries?.length || 0} interactions`;
+  document.getElementById('app-deal-stage').textContent = `STAGE: ${dealId.slice(-1)||'1'}`;
+  document.getElementById('app-deal-tier').textContent  = dealId.includes('001') || dealId.includes('002') ? 'T1' : 'T2';
+
+  document.getElementById('app-log-rep').textContent   = deal.rep_name;
+  document.getElementById('app-log-chip').textContent  = `@${deal.stakeholders?.[0] || 'Stakeholder'}`;
+  document.getElementById('app-log-time').textContent  = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+
+  renderAppDealList(appAllDeals);
+  renderAppLogHistory(deal);
+  getBriefingApp();
+}
+
+function renderAppLogHistory(deal) {
+  const el = document.getElementById('app-log-history');
+  if (!el) return;
+  const entries = deal.log_entries || [];
+  if (!entries.length) {
+    el.innerHTML = '<div style="color:var(--ol);font-size:12px;text-align:center;padding:12px 0;">No interactions yet.</div>';
+    return;
+  }
+  el.innerHTML = [...entries].reverse().map((e, i) => `
+    <div style="padding:8px 10px;border-radius:8px;border:1px solid var(--ov);background:${i===0?'var(--sc)':'transparent'};">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+        <span class="mono" style="font-size:10px;color:var(--p);">${e.date||'Recent'}</span>
+        ${i===0 ? '<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:var(--p);color:#fff;font-family:\'JetBrains Mono\',monospace;">Latest</span>' : ''}
+      </div>
+      <p style="font-size:12px;color:var(--os);line-height:1.5;margin:0;">${e.text}</p>
+    </div>
+  `).join('');
+}
+
+function appReloadHistory() {
+  if (!appCurrentDealId) return;
+  const deal = appAllDeals.find(d => d.deal_id === appCurrentDealId);
+  if (deal) renderAppLogHistory(deal);
+  else appShowToast('Select a deal first', true);
+}
+
+// ── Interaction Type Tabs ─────────────────────────────────────────────────
+function appSetType(type) {
+  appActiveType = type;
+  ['Call','Email','Demo','Note'].forEach(t => {
+    const btn = document.getElementById(`app-tab-${t}`);
+    if (!btn) return;
+    if (t === type) {
+      btn.style.background = 'var(--schh)';
+      btn.style.color = 'var(--os)';
+      btn.style.borderColor = 'var(--ov)';
+    } else {
+      btn.style.background = 'transparent';
+      btn.style.color = 'var(--osv)';
+      btn.style.borderColor = 'var(--ov)';
+    }
+  });
+}
+
+function appClearLog() {
+  document.getElementById('app-log-input').value = '';
+  document.getElementById('app-log-input').focus();
+}
+
+// ── Submit Log ─────────────────────────────────────────────────────────────
+async function appSubmitLog() {
+  if (!appCurrentDealId) { appShowToast('Select a deal first', true); return; }
+  const input = document.getElementById('app-log-input');
+  const text  = input.value.trim();
+  if (!text)  { appShowToast('Please enter interaction notes', true); return; }
+
+  const btn = document.getElementById('app-log-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ms spin" style="font-size:14px;">progress_activity</span>Saving...';
+
+  try {
+    const fullText = `[${appActiveType}] ${text}`;
+    const res = await fetch(`/deals/${appCurrentDealId}/log`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: fullText })
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Log failed'); }
+
+    input.value = '';
+    document.getElementById('app-sync-label').textContent = 'Synced just now';
+    setTimeout(() => { document.getElementById('app-sync-label').textContent = 'LIVE_SYNC'; }, 5000);
+
+    // Update local
+    const deal = appAllDeals.find(d => d.deal_id === appCurrentDealId);
+    if (deal) {
+      if (!deal.log_entries) deal.log_entries = [];
+      deal.log_entries.push({ date: new Date().toISOString().split('T')[0], text: fullText });
+      renderAppLogHistory(deal);
+      document.getElementById('app-deal-owner').textContent = `${deal.rep_name} · ${deal.log_entries.length} interactions`;
+    }
+
+    appShowToast('✅ Retained into Hindsight memory!');
+    appAddNotification('save', `Interaction logged for ${deal?.company || appCurrentDealId}`);
+    getBriefingApp();
+  } catch (err) {
+    appShowToast(err.message, true);
+  } finally {
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="ms" style="font-size:14px;">save</span>Save Entry';
+    }, 1500);
+  }
+}
+
+// ── Briefing ──────────────────────────────────────────────────────────────
+async function getBriefingApp() {
+  if (!appCurrentDealId) return;
+  const statusEl = document.getElementById('app-brief-status');
+  if (statusEl) statusEl.innerHTML = '<span class="ms spin" style="font-size:12px;">sync</span> Loading...';
+
+  try {
+    const res = await fetch(`/deals/${appCurrentDealId}/brief`);
+    if (!res.ok) { const e = await res.json(); throw new Error(e.detail||'Failed'); }
+    const data = await res.json();
+
+    if (statusEl) statusEl.textContent = `${data.recalled_count} memories recalled`;
+    const raw = document.getElementById('app-raw-brief');
+    if (raw) raw.textContent = data.briefing;
+    parseAppBriefing(data.briefing);
+
+    appAddNotification('auto_awesome', `AI briefing updated for ${data.company || appCurrentDealId}`);
+  } catch (err) {
+    if (statusEl) statusEl.textContent = `Error`;
+    appShowToast(err.message, true);
+  }
+}
+
+function parseAppBriefing(md) {
+  let obj  = 'No objections recorded.';
+  let st   = 'Key stakeholders active.';
+  let comp = 'No competitor friction.';
+  let next = 'Proceed with follow-up.';
+
+  const objM  = md.match(/(?:Objections?)[^:\n]*:?\s*([\s\S]*?)(?=Stakeholders?|Competitors?|Suggested|$)/i);
+  const stM   = md.match(/(?:Stakeholders?)[^:\n]*:?\s*([\s\S]*?)(?=Competitors?|Suggested|Objections?|$)/i);
+  const compM = md.match(/(?:Competitors?)[^:\n]*:?\s*([\s\S]*?)(?=Suggested|Stakeholders?|Objections?|$)/i);
+  const nextM = md.match(/(?:Suggested Next Move|Next Move)[^:\n]*:?\s*([\s\S]*?)(?=$)/i);
+
+  if (objM?.[1]?.trim())  obj  = appCleanMd(objM[1]);
+  if (stM?.[1]?.trim())   st   = appCleanMd(stM[1]);
+  if (compM?.[1]?.trim()) comp = appCleanMd(compM[1]);
+  if (nextM?.[1]?.trim()) next = appCleanMd(nextM[1]);
+
+  document.getElementById('app-obj').innerHTML  = obj;
+  document.getElementById('app-st').innerHTML   = st;
+  document.getElementById('app-comp').innerHTML = comp;
+  document.getElementById('app-next').innerHTML = next;
+}
+
+function appCleanMd(text) {
+  return text.trim()
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[-*]\s+/gm, '• ')
+    .replace(/\n/g, '<br/>');
+}
+
+// ── Patterns ──────────────────────────────────────────────────────────────
+async function getPatternsApp() {
+  const hl   = document.getElementById('app-pattern-headline');
+  const body = document.getElementById('app-pattern-body');
+  const conf = document.getElementById('app-pattern-conf');
+  const btn  = document.getElementById('app-pattern-btn');
+
+  if (btn) btn.disabled = true;
+  if (hl)  hl.textContent = 'Analyzing global memory corpus...';
+  if (body) body.innerHTML = '<span style="color:var(--ol);">Querying Hindsight + Groq...</span>';
+
+  try {
+    const res = await fetch('/patterns');
+    if (!res.ok) { const e = await res.json(); throw new Error(e.detail||'Failed'); }
+    const data = await res.json();
+
+    if (conf) conf.textContent = `CORPUS: ${data.deals_count} memories`;
+    const first = data.pattern.split('\n').find(l => l.trim().length > 20) || 'Pattern Detected';
+    if (hl)  hl.textContent = first.replace(/^[#*\-]+\s*/,'').replace(/\*\*/g,'');
+    if (body) body.innerHTML = data.pattern.replace(/\n/g,'<br/>').replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--os)">$1</strong>');
+
+    appShowToast('🔍 Cross-deal pattern detected!');
+    appAddNotification('insights', `Pattern: ${first.substring(0,55)}...`);
+
+    // Highlight signals nav
+    document.getElementById('nav-signals').style.color = 'var(--p)';
+    setTimeout(() => { document.getElementById('nav-signals').style.color = 'var(--osv)'; }, 3000);
+  } catch (err) {
+    if (hl) hl.textContent = 'Pattern detection stalled';
+    if (body) body.textContent = err.message;
+    appShowToast(err.message, true);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ── Copy Link ─────────────────────────────────────────────────────────────
+function copyDealLinkApp() {
+  const url = `${window.location.origin}/#${appCurrentDealId || ''}`;
+  navigator.clipboard.writeText(url).then(() => {
+    appShowToast('🔗 Deal link copied!');
+  }).catch(() => appShowToast('Could not copy link', true));
+}
+
+// ── Add New Deal ───────────────────────────────────────────────────────────
+async function appAddNewDeal() {
+  const id      = document.getElementById('app-nd-id').value.trim();
+  const company = document.getElementById('app-nd-company').value.trim();
+  const rep     = document.getElementById('app-nd-rep').value.trim() || 'Sales Rep';
+  const value   = document.getElementById('app-nd-value').value.trim() || '$50,000';
+  const note    = document.getElementById('app-nd-note').value.trim();
+
+  if (!id || !company) { appShowToast('Deal ID and Company required', true); return; }
+  if (appAllDeals.some(d => d.deal_id === id)) { appShowToast(`Deal ID "${id}" already exists`, true); return; }
+
+  try {
+    const text = note || `Initial deal creation: ${company}`;
+    const res = await fetch(`/deals/${id}/log`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: `[Note] ${text}` })
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.detail||'Failed'); }
+
+    const newDeal = {
+      deal_id: id, company, rep_name: rep, deal_value: value,
+      log_entries: [{ date: new Date().toISOString().split('T')[0], text: `[Note] ${text}` }]
+    };
+    appAllDeals.push(newDeal);
+    updateAppPipelineMetrics();
+    updateAppWorkspaceLabel();
+
+    ['app-nd-id','app-nd-company','app-nd-rep','app-nd-value','app-nd-note'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    closeDrawer('app-add-deal-drawer');
+    appSelectDeal(id);
+    appShowToast(`✅ Deal "${company}" created!`);
+    appAddNotification('add_circle', `New deal created: ${company}`);
+  } catch (err) {
+    appShowToast(err.message, true);
+  }
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+let _appToastTimer;
+function appShowToast(msg, isError = false) {
+  const t    = document.getElementById('app-toast');
+  const icon = document.getElementById('app-toast-icon');
+  const msgEl= document.getElementById('app-toast-msg');
+  if (!t) return;
+  icon.textContent  = isError ? 'error' : 'check_circle';
+  icon.style.color  = isError ? 'var(--e)' : 'var(--p)';
+  msgEl.textContent = msg;
+  t.style.opacity   = '1';
+  t.style.transform = 'translateY(0)';
+  t.style.pointerEvents = 'auto';
+  clearTimeout(_appToastTimer);
+  _appToastTimer = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(6px)';
+    t.style.pointerEvents = 'none';
+  }, 3800);
+}
+
+// ── Keyboard ──────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['app-search-drawer','app-profile-drawer','app-notif-drawer','app-add-deal-drawer'].forEach(id => closeDrawer(id));
+    return;
+  }
+  const mod = e.metaKey || e.ctrlKey;
+  if (!mod) return;
+  if (e.key === 'Enter') { e.preventDefault(); appSubmitLog(); }
+  if (e.key === 'd')     { e.preventDefault(); toggleTheme(); }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  renderAppNotifications();
+  appLoadDeals();
+  // Show mobile badge
+  if (window.innerWidth < 768) {
+    document.getElementById('app-mode-badge').style.display = 'inline-flex';
+  }
+});
+</script>
+</body>
+</html>
