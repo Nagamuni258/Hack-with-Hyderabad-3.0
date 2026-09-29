@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deal Intelligence Agent — Persistent Sales Memory</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --code-bg: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px 32px;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 24px;
+    }
+
+    .title-group h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a5b4fc, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-group p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 10px;
+    }
+
+    .badge {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-memory {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .badge-llm {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Layout Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+    }
+
+    /* Left Sidebar: Deal Controls & Logging */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, textarea, input {
+      width: 100%;
+      background: #0d131f;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px 14px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    select:focus, textarea:focus, input:focus {
+      border-color: var(--primary);
+    }
+
+    .deal-info-box {
+      background: #0d131f;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 14px;
+      border: 1px dashed var(--card-border);
+      font-size: 14px;
+    }
+
+    .deal-info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .deal-info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: #1f2937;
+      color: #d1d5db;
+      border: 1px solid #374151;
+    }
+
+    .btn-secondary:hover {
+      background-color: #374151;
+      color: white;
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+
+    .btn-accent:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+    }
+
+    /* Main Display Area */
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .output-card {
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .output-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #f3f4f6;
+    }
+
+    .output-body {
+      flex: 1;
+      overflow-y: auto;
+      background: #0d131f;
+      border-radius: 8px;
+      padding: 20px 24px;
+      border: 1px solid var(--card-border);
+      font-size: 15px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Markdown Styling Inside Output */
+    .output-body h3 {
+      font-size: 18px;
+      margin: 14px 0 8px 0;
+      color: #93c5fd;
+    }
+
+    .output-body strong {
+      color: #f9fafb;
+    }
+
+    .output-body ul {
+      margin-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .output-body li {
+      margin-bottom: 6px;
+    }
+
+    /* Loading Spinner */
+    .loader {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+      display: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="title-group">
+      <h1>💼 Deal Intelligence Agent</h1>
+      <p>Autonomous sales memory & cross-deal pattern intelligence for closing faster</p>
+    </div>
+    <div class="badges">
+      <span class="badge badge-memory">🧠 Hindsight Cloud Memory</span>
+      <span class="badge badge-llm">⚡ Groq openai/gpt-oss-120b</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- Left Column: Controls -->
+    <div>
+      <!-- Deal Selector -->
+      <div class="card">
+        <h2>1. Active Opportunity</h2>
+        <label for="deal-select">Select Deal</label>
+        <select id="deal-select" onchange="onDealChange()">
+          <option value="" disabled selected>Loading deals...</option>
+        </select>
+
+        <div id="deal-info" class="deal-info-box" style="display: none;">
+          <div class="deal-info-row">
+            <span style="color: var(--text-muted);">Company:</span>
+            <strong id="info-company">-</strong>
+          </div>
+          <div class="deal-info-row">
+            <span style="color: var(--text-muted);">Deal Value:</span>
+            <strong id="info-value" style="color: #34d399;">-</strong>
+          </div>
+          <div class="deal-info-row">
+            <span style="color: var(--text-muted);">Account Rep:</span>
+            <span id="info-rep">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Log New Interaction -->
+      <div class="card">
+        <h2>2. Log Interaction</h2>
+        <label for="log-text">Call / Email / Meeting Note</label>
+        <textarea id="log-text" rows="4" placeholder="e.g. Marcus (CFO) objected to pricing, asking for 20% discount or annual prepaid terms..."></textarea>
+        <div style="margin-top: 14px;">
+          <button id="btn-log" class="btn btn-secondary" onclick="logInteraction()">
+            <span>💾 Retain to Hindsight</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Intelligence Output -->
+    <div class="card output-card">
+      <div class="action-bar">
+        <button id="btn-brief" class="btn btn-primary" onclick="getBriefing()" style="flex: 1;">
+          <span>📋 Get Deal Briefing</span>
+        </button>
+        <button id="btn-pattern" class="btn btn-accent" onclick="getPatterns()" style="flex: 1;">
+          <span>🔍 Spot Cross-Deal Patterns</span>
+        </button>
+      </div>
+
+      <div class="output-header">
+        <div class="output-title" id="output-title">Deal Briefing Canvas</div>
+        <div id="status-indicator" style="font-size: 13px; color: var(--text-muted);">Ready</div>
+      </div>
+
+      <div class="output-body" id="output-content">
+Select a deal from the left and click <strong>"Get Deal Briefing"</strong> to recall all previous meetings, objections, and stakeholders from Hindsight memory.
+
+Or click <strong>"Spot Cross-Deal Patterns"</strong> to autonomously analyze recurring patterns across all deals.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  let currentDeals = [];
+
+  // Initialize deals on page load
+  async function init() {
+    try {
+      const res = await fetch('/deals');
+      currentDeals = await res.json();
+      const select = document.getElementById('deal-select');
+      select.innerHTML = '';
+      
+      if (currentDeals.length === 0) {
+        select.innerHTML = '<option value="">No deals found. Run seed script.</option>';
+        return;
+      }
+
+      currentDeals.forEach((deal, idx) => {
+        const opt = document.createElement('option');
+        opt.value = deal.deal_id;
+        opt.textContent = `${deal.company} (${deal.deal_id}) - ${deal.deal_value}`;
+        select.appendChild(opt);
+      });
+
+      onDealChange();
+    } catch (err) {
+      console.error("Failed to load deals:", err);
+      showToast("Error connecting to Deal Intel Agent backend", true);
+    }
+  }
+
+  function onDealChange() {
+    const select = document.getElementById('deal-select');
+    const selectedId = select.value;
+    const deal = currentDeals.find(d => d.deal_id === selectedId);
+    
+    if (deal) {
+      document.getElementById('deal-info').style.display = 'block';
+      document.getElementById('info-company').textContent = deal.company;
+      document.getElementById('info-value').textContent = deal.deal_value || "$0";
+      document.getElementById('info-rep').textContent = deal.rep_name;
+    }
+  }
+
+  // Action: Log interaction
+  async function logInteraction() {
+    const dealId = document.getElementById('deal-select').value;
+    const text = document.getElementById('log-text').value.trim();
+
+    if (!dealId) {
+      showToast("Please select a deal first", true);
+      return;
+    }
+    if (!text) {
+      showToast("Please enter interaction notes to log", true);
+      return;
+    }
+
+    const btn = document.getElementById('btn-log');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Retaining memory...';
+
+    try {
+      const res = await fetch(`/deals/${dealId}/log`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Log failed');
+      }
+
+      document.getElementById('log-text').value = '';
+      showToast("✅ Successfully retained into Hindsight persistent memory!");
+      // Automatically refresh briefing
+      getBriefing();
+    } catch (err) {
+      showToast("Error: " + err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>💾 Retain to Hindsight</span>';
+    }
+  }
+
+  // Action: Get Briefing
+  async function getBriefing() {
+    const dealId = document.getElementById('deal-select').value;
+    if (!dealId) {
+      showToast("Please select a deal first", true);
+      return;
+    }
+
+    const btn = document.getElementById('btn-brief');
+    const title = document.getElementById('output-title');
+    const body = document.getElementById('output-content');
+    const status = document.getElementById('status-indicator');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Recalling Hindsight memory...';
+    title.textContent = `Recalling Memory for ${dealId}...`;
+    status.textContent = 'Querying Hindsight & Groq...';
+    body.textContent = 'Recalling interaction logs and generating structured briefing...';
+
+    try {
+      const res = await fetch(`/deals/${dealId}/brief`);
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Briefing failed');
+      }
+
+      const data = await res.json();
+      title.textContent = `📋 Briefing: ${data.company || dealId}`;
+      status.textContent = `Recalled ${data.recalled_count} memories from Hindsight`;
+      body.innerHTML = formatMarkdown(data.briefing);
+    } catch (err) {
+      body.textContent = "Error loading briefing: " + err.message;
+      status.textContent = "Error";
+      showToast(err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>📋 Get Deal Briefing</span>';
+    }
+  }
+
+  // Action: Spot Cross-Deal Patterns
+  async function getPatterns() {
+    const btn = document.getElementById('btn-pattern');
+    const title = document.getElementById('output-title');
+    const body = document.getElementById('output-content');
+    const status = document.getElementById('status-indicator');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Scanning all deals...';
+    title.textContent = '🔍 Cross-Deal Pattern Intelligence';
+    status.textContent = 'Synthesizing global deal memories...';
+    body.textContent = 'Recalling all objections, competitor tactics, and closed deals across Hindsight memory...';
+
+    try {
+      const res = await fetch('/patterns');
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Pattern detection failed');
+      }
+
+      const data = await res.json();
+      title.textContent = '🔍 Proactive Cross-Deal Pattern Detected';
+      status.textContent = `Analyzed ${data.deals_count} historical memory entries`;
+      body.innerHTML = formatMarkdown(data.pattern);
+    } catch (err) {
+      body.textContent = "Error detecting patterns: " + err.message;
+      status.textContent = "Error";
+      showToast(err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>🔍 Spot Cross-Deal Patterns</span>';
+    }
+  }
+
+  function formatMarkdown(text) {
+    if (!text) return '';
+    // Basic formatting for headers, bold, bullets
+    return text
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2 style="font-size: 20px; margin: 12px 0 8px;">$1</h2>')
+      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+      .replace(/^\- (.*$)/gim, '<li>$1</li>')
+      .replace(/\n\n/g, '<br><br>');
+  }
+
+  function showToast(msg, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.borderColor = isError ? 'var(--danger)' : 'var(--accent)';
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 4000);
+  }
+
+  window.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
